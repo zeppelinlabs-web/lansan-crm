@@ -15,40 +15,46 @@ import {
   ImportHistoryRow
 } from './types';
 
+export const initialUsers: UserMember[] = [
+  { id: 1, name: 'LaToya', email: 'latoya@lansanconnect.com', role: 'Admin', status: 'Active', avatarColor: '#1D9E75' },
+  { id: 2, name: 'James Wilson', email: 'j.wilson@lansanconnect.com', role: 'Manager', status: 'Active', avatarColor: '#0284c7' },
+  { id: 3, name: 'Sofia Rodriguez', email: 'sofia@lansanconnect.com', role: 'Agent', status: 'Active', avatarColor: '#7c3aed' },
+];
+
 export const initialContacts: Contact[] = [
-  { id: 1, name: 'Daria Rowe', company: 'Summit Group', email: 'daria@summit.com', phone: '(555) 234-5678', status: 'Active' },
-  { id: 2, name: 'Marcus Vance', company: 'Apex Solutions', email: 'm.vance@apex.io', phone: '(555) 876-5432', status: 'Lead' },
-  { id: 3, name: 'Elena Rostova', company: 'TechFlow Inc', email: 'elena@techflow.dev', phone: '(555) 345-6789', status: 'Active' },
-  { id: 4, name: 'Amanda Chen', company: 'Vanguard Co', email: 'amanda@vanguard.com', phone: '(555) 901-2345', status: 'Lead' },
+  { id: 1, name: 'Daria Rowe', company: 'Summit Group', email: 'daria@summit.com', phone: '(555) 234-5678', status: 'Active', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 2, name: 'Marcus Vance', company: 'Apex Solutions', email: 'm.vance@apex.io', phone: '(555) 876-5432', status: 'Lead', assignedToId: 2, assignedToName: 'James Wilson' },
+  { id: 3, name: 'Elena Rostova', company: 'TechFlow Inc', email: 'elena@techflow.dev', phone: '(555) 345-6789', status: 'Active', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 4, name: 'Amanda Chen', company: 'Vanguard Co', email: 'amanda@vanguard.com', phone: '(555) 901-2345', status: 'Lead', assignedToId: 3, assignedToName: 'Sofia Rodriguez' },
 ];
 
 export const initialDeals: Deal[] = [
-  { id: 1, name: 'Call center platform', company: 'Apex Solutions', contactName: 'Marcus Vance', amount: 24500, stage: 'Negotiation' },
-  { id: 2, name: 'Onboarding setup', company: 'TechFlow Inc', contactName: 'Elena Rostova', amount: 12000, stage: 'Proposal' },
-  { id: 3, name: 'Support desk license', company: 'Summit Group', contactName: 'Daria Rowe', amount: 18200, stage: 'Qualified' },
-  { id: 4, name: 'CRM migration consulting', company: 'Vanguard Co', contactName: 'Amanda Chen', amount: 22000, stage: 'Lead' },
+  { id: 1, name: 'Call center platform', company: 'Apex Solutions', contactName: 'Marcus Vance', amount: 24500, stage: 'Negotiation', assignedToId: 2, assignedToName: 'James Wilson' },
+  { id: 2, name: 'Onboarding setup', company: 'TechFlow Inc', contactName: 'Elena Rostova', amount: 12000, stage: 'Proposal', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 3, name: 'Support desk license', company: 'Summit Group', contactName: 'Daria Rowe', amount: 18200, stage: 'Qualified', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 4, name: 'CRM migration consulting', company: 'Vanguard Co', contactName: 'Amanda Chen', amount: 22000, stage: 'Lead', assignedToId: 3, assignedToName: 'Sofia Rodriguez' },
 ];
 
 export const initialTasks: TaskItem[] = [
-  { id: 1, text: 'Follow up with Daria about contract renewal', due: '2026-06-10', priority: 'High', done: false },
-  { id: 2, text: 'Send onboarding deck to TechFlow', due: '2026-06-12', priority: 'Medium', done: false },
-  { id: 3, text: 'Prepare Q3 revenue report', due: '2026-06-15', priority: 'Low', done: false },
-  { id: 4, text: 'Review campaign stats for Spring Outreach', due: '2026-06-05', priority: 'High', done: true },
+  { id: 1, text: 'Follow up with Daria about contract renewal', due: '2026-06-10', priority: 'High', done: false, assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 2, text: 'Send onboarding deck to TechFlow', due: '2026-06-12', priority: 'Medium', done: false, assignedToId: 2, assignedToName: 'James Wilson' },
+  { id: 3, text: 'Prepare Q3 revenue report', due: '2026-06-15', priority: 'Low', done: false, assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 4, text: 'Review campaign stats for Spring Outreach', due: '2026-06-05', priority: 'High', done: true, assignedToId: 3, assignedToName: 'Sofia Rodriguez' },
 ];
 
 export const initialLeads: LeadItem[] = [
-  { id: 1, name: 'Sarah Connor', company: 'Cyberdyne Systems', email: 'sarah@cyberdyne.com', source: 'Website', score: 'Hot', value: 35000, added: '2026-06-01' },
-  { id: 2, name: 'David Miller', company: 'Nexus Logistics', email: 'david@nexuslog.com', source: 'LinkedIn', score: 'Hot', value: 18000, added: '2026-06-02' },
-  { id: 3, name: 'Amanda Chen', company: 'Vanguard Retail', email: 'amanda@vanguard.com', source: 'Referral', score: 'Warm', value: 12500, added: '2026-06-03' },
-  { id: 4, name: 'Carlos Mendez', company: 'Solaris Health', email: 'carlos@solaris.org', source: 'Cold outreach', score: 'Warm', value: 9200, added: '2026-06-04' },
-  { id: 5, name: 'Rachel Green', company: 'Bloom Retail', email: 'rachel@bloom.com', source: 'Ad campaign', score: 'Cold', value: 5000, added: '2026-06-05' },
+  { id: 1, name: 'Sarah Connor', company: 'Cyberdyne Systems', email: 'sarah@cyberdyne.com', source: 'Website', score: 'Hot', value: 35000, added: '2026-06-01', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 2, name: 'David Miller', company: 'Nexus Logistics', email: 'david@nexuslog.com', source: 'LinkedIn', score: 'Hot', value: 18000, added: '2026-06-02', assignedToId: 2, assignedToName: 'James Wilson' },
+  { id: 3, name: 'Amanda Chen', company: 'Vanguard Retail', email: 'amanda@vanguard.com', source: 'Referral', score: 'Warm', value: 12500, added: '2026-06-03', assignedToId: 3, assignedToName: 'Sofia Rodriguez' },
+  { id: 4, name: 'Carlos Mendez', company: 'Solaris Health', email: 'carlos@solaris.org', source: 'Cold outreach', score: 'Warm', value: 9200, added: '2026-06-04', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 5, name: 'Rachel Green', company: 'Bloom Retail', email: 'rachel@bloom.com', source: 'Ad campaign', score: 'Cold', value: 5000, added: '2026-06-05', assignedToId: 2, assignedToName: 'James Wilson' },
 ];
 
 export const initialAppointments: Appointment[] = [
-  { id: 1, time: '09:00 AM', name: 'Daria Rowe — Summit Contract Review', type: 'Video call', status: 'Confirmed', date: 'Today' },
-  { id: 2, time: '11:30 AM', name: 'Marcus Vance — Platform Demo', type: 'Product Demo', status: 'Pending', date: 'Today' },
-  { id: 3, time: '02:00 PM', name: 'Elena Rostova — Onboarding Check-in', type: 'Discovery', status: 'Confirmed', date: 'Today' },
-  { id: 4, time: '04:15 PM', name: 'Sarah Connor — Discovery Call', type: 'Sales Call', status: 'Cancelled', date: 'Today' },
+  { id: 1, time: '09:00 AM', name: 'Daria Rowe — Summit Contract Review', type: 'Video call', status: 'Confirmed', date: 'Today', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 2, time: '11:30 AM', name: 'Marcus Vance — Platform Demo', type: 'Product Demo', status: 'Pending', date: 'Today', assignedToId: 2, assignedToName: 'James Wilson' },
+  { id: 3, time: '02:00 PM', name: 'Elena Rostova — Onboarding Check-in', type: 'Discovery', status: 'Confirmed', date: 'Today', assignedToId: 1, assignedToName: 'LaToya' },
+  { id: 4, time: '04:15 PM', name: 'Sarah Connor — Discovery Call', type: 'Sales Call', status: 'Cancelled', date: 'Today', assignedToId: 3, assignedToName: 'Sofia Rodriguez' },
 ];
 
 export const initialAutomations: AutomationRule[] = [
@@ -64,9 +70,9 @@ export const initialAutomationLogs: AutomationLog[] = [
 ];
 
 export const initialTemplates: EmailTemplate[] = [
-  { id: 1, name: 'Welcome new lead', subject: 'Welcome to Lansan Connect, {{first_name}}!', body: 'Hi {{first_name}},\n\nThank you for reaching out! We\'re thrilled to learn more about {{company}} and help you streamline your sales operations.\n\nWould you have 15 minutes for a brief call tomorrow?\n\nBest regards,\nLaToya' },
-  { id: 2, name: 'Follow-up email', subject: 'Checking in — {{company}}', body: 'Hi {{first_name}},\n\nI wanted to follow up on our recent conversation. Do you have 15 minutes this week to reconnect?\n\nLooking forward to hearing from you.\n\nBest,\nLaToya' },
-  { id: 3, name: 'Proposal sent', subject: 'Your proposal from Lansan Connect', body: 'Hi {{first_name}},\n\nPlease find attached your custom proposal for {{service}}. I\'m confident this solution will deliver measurable results for {{company}}.\n\nLet me know if you have any questions.\n\nWarm regards,\nLaToya' },
+  { id: 1, name: 'Welcome new lead', subject: 'Welcome to Lansan Connect, {{first_name}}!', body: 'Hi {{first_name}},\n\nThank you for reaching out! We\'re thrilled to learn more about {{company}} and help you streamline your sales operations.\n\nWould you have 15 minutes for a brief call tomorrow?\n\nBest regards,\nLansan Sales Team' },
+  { id: 2, name: 'Follow-up email', subject: 'Checking in — {{company}}', body: 'Hi {{first_name}},\n\nI wanted to follow up on our recent conversation. Do you have 15 minutes this week to reconnect?\n\nLooking forward to hearing from you.\n\nBest,\nLansan Sales Team' },
+  { id: 3, name: 'Proposal sent', subject: 'Your proposal from Lansan Connect', body: 'Hi {{first_name}},\n\nPlease find attached your custom proposal for {{service}}. I\'m confident this solution will deliver measurable results for {{company}}.\n\nLet me know if you have any questions.\n\nWarm regards,\nLansan Sales Team' },
   { id: 4, name: 'Invoice reminder', subject: 'Invoice #{{invoice_id}} due soon', body: 'Hi {{first_name}},\n\nThis is a friendly reminder that invoice #{{invoice_id}} for ${{amount}} is due on {{due_date}}.\n\nPlease use the payment link below to complete your payment.\n\nThank you,\nLansan Connect Finance Team' },
 ];
 
@@ -77,22 +83,16 @@ export const initialCampaigns: Campaign[] = [
 ];
 
 export const initialInvoices: Invoice[] = [
-  { id: 'INV-001', client: 'Apex Solutions', desc: 'Call center services — April', amount: 8200, due: '2026-05-01', status: 'Paid' },
-  { id: 'INV-002', client: 'TechFlow Inc', desc: 'Platform onboarding — Q1', amount: 4500, due: '2026-05-15', status: 'Paid' },
-  { id: 'INV-003', client: 'Summit Group', desc: 'Services — April', amount: 11800, due: '2026-06-01', status: 'Overdue' },
-  { id: 'INV-004', client: 'Apex Solutions', desc: 'Call center services — May', amount: 8200, due: '2026-06-15', status: 'Pending' },
+  { id: 'INV-001', client: 'Apex Solutions', desc: 'Call center services — April', amount: 8200, due: '2026-05-01', status: 'Paid', assignedToId: 2 },
+  { id: 'INV-002', client: 'TechFlow Inc', desc: 'Platform onboarding — Q1', amount: 4500, due: '2026-05-15', status: 'Paid', assignedToId: 1 },
+  { id: 'INV-003', client: 'Summit Group', desc: 'Services — April', amount: 11800, due: '2026-06-01', status: 'Overdue', assignedToId: 1 },
+  { id: 'INV-004', client: 'Apex Solutions', desc: 'Call center services — May', amount: 8200, due: '2026-06-15', status: 'Pending', assignedToId: 2 },
 ];
 
 export const initialPayments: PaymentTransaction[] = [
   { id: 'ch_001', client: 'Apex Solutions', desc: 'INV-001', amount: 8200, date: '2026-05-02', status: 'Succeeded' },
   { id: 'ch_002', client: 'TechFlow Inc', desc: 'INV-002', amount: 4500, date: '2026-05-16', status: 'Succeeded' },
   { id: 'ch_003', client: 'Apex Solutions', desc: 'INV-004 partial', amount: 3800, date: '2026-06-03', status: 'Succeeded' },
-];
-
-export const initialUsers: UserMember[] = [
-  { id: 1, name: 'LaToya', email: 'latoya@lansanconnect.com', role: 'Admin', status: 'Active' },
-  { id: 2, name: 'James Wilson', email: 'j.wilson@lansanconnect.com', role: 'Manager', status: 'Active' },
-  { id: 3, name: 'Sofia Rodriguez', email: 'sofia@lansanconnect.com', role: 'Agent', status: 'Active' },
 ];
 
 export const initialIntegrations: IntegrationItem[] = [

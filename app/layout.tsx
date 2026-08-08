@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { CRMProvider } from '@/components/providers/CRMProvider';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { Topbar } from '@/components/layout/Topbar';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { GlobalModals } from '@/components/layout/GlobalModals';
 
 export const metadata: Metadata = {
-  title: 'Lansan CRM',
-  description: 'Powerful business CRM platform',
+  title: 'Lansan CRM — The All-in-One Sales & Automation Platform',
+  description: 'Enterprise CRM for fast-growing sales teams, lead pipelines, automated campaigns, and financial management.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,13 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <CRMProvider>
-          <div className="app-container">
-            <Sidebar />
-            <div className="main-container">
-              <Topbar />
-              <div className="content-area">{children}</div>
-            </div>
-          </div>
+          <AppLayout>{children}</AppLayout>
           <GlobalModals />
         </CRMProvider>
       </body>

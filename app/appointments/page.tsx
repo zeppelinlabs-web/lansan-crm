@@ -269,9 +269,9 @@ export default function AppointmentsPage() {
 
                   {dayAppts.length > 0 && (
                     <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap', marginTop: '4px' }}>
-                      {dayAppts.map((appt) => (
+                      {dayAppts.map((appt, aIdx) => (
                         <span
-                          key={appt.id}
+                          key={`dot-${appt.id}-${aIdx}`}
                           style={{
                             width: '6px',
                             height: '6px',
@@ -307,9 +307,9 @@ export default function AppointmentsPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {selectedDayAppts.map((appt) => (
+              {selectedDayAppts.map((appt, aIdx) => (
                 <div
-                  key={appt.id}
+                  key={`sb-${appt.id}-${aIdx}`}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -358,8 +358,8 @@ export default function AppointmentsPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredAppts.map((appt) => (
-              <tr key={appt.id}>
+            {filteredAppts.map((appt, aIdx) => (
+              <tr key={`tbl-${appt.id}-${aIdx}`}>
                 <td style={{ fontWeight: 600, color: '#0F6E56' }}>{appt.time}</td>
                 <td>
                   <strong>{appt.name}</strong>

@@ -140,12 +140,12 @@ export default function LeadGenPage() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {scoreLeads.map((lead) => {
+                {scoreLeads.map((lead, lIdx) => {
                   const isDragging = draggedLeadId === lead.id;
 
                   return (
                     <div
-                      key={lead.id}
+                      key={`lead-${lead.id}-${lIdx}`}
                       draggable
                       onDragStart={(e) => handleDragStart(e, lead.id)}
                       onDragEnd={() => {

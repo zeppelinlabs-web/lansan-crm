@@ -130,7 +130,7 @@ export default function PublicBookingPage() {
         }}
       >
         <Link href="/dashboard" style={{ textDecoration: 'none' }}>
-          <Logo size="lg" />
+          <Logo size="lg" lightMode={true} />
         </Link>
         <Link href="/dashboard">
           <Button variant="sm">

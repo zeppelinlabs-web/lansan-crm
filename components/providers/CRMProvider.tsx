@@ -50,6 +50,10 @@ export type ModalType =
   | null;
 
 interface CRMContextType {
+  currentUser: UserMember;
+  switchUser: (userId: number) => void;
+
+  // Raw global state (for Admin management)
   contacts: Contact[];
   addContact: (contact: Omit<Contact, 'id'>) => void;
   deleteContact: (id: number) => void;
@@ -95,7 +99,9 @@ interface CRMContextType {
   deleteCampaign: (id: number) => void;
 
   invoices: Invoice[];
-  addInvoice: (inv: Omit<Invoice, 'id' | 'status'>) => void;
+  addInvoice: (inv: Omit<Invoice, 'status'> & { status?: 'Paid' | 'Pending' | 'Overdue' | 'Cancelled' }) => void;
+  updateInvoiceStatus: (id: string, status: string) => void;
+  deleteInvoice: (id: string) => void;
 
   payments: PaymentTransaction[];
   addPayment: (payment: Omit<PaymentTransaction, 'id' | 'date' | 'status'>) => void;
@@ -109,6 +115,16 @@ interface CRMContextType {
 
   importHistory: ImportHistoryRow[];
   addImportHistory: (row: ImportHistoryRow) => void;
+  clearImportHistory: () => void;
+  deleteImportHistoryRow: (index: number) => void;
+
+  // Strictly Scoped Data views based on active currentUser role & isolation
+  userContacts: Contact[];
+  userDeals: Deal[];
+  userTasks: TaskItem[];
+  userLeads: LeadItem[];
+  userAppointments: Appointment[];
+  userInvoices: Invoice[];
 
   searchQuery: string;
   setSearchQuery: (q: string) => void;
@@ -129,6 +145,9 @@ interface CRMContextType {
 const CRMContext = createContext<CRMContextType | undefined>(undefined);
 
 export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [users, setUsers] = useState<UserMember[]>(initialUsers);
+  const [currentUser, setCurrentUser] = useState<UserMember>(initialUsers[0]); // Default: LaToya (Admin)
+
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
   const [deals, setDeals] = useState<Deal[]>(initialDeals);
   const [tasks, setTasks] = useState<TaskItem[]>(initialTasks);
@@ -140,7 +159,6 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
   const [payments, setPayments] = useState<PaymentTransaction[]>(initialPayments);
-  const [users, setUsers] = useState<UserMember[]>(initialUsers);
   const [integrations, setIntegrations] = useState<IntegrationItem[]>(initialIntegrations);
   const [importHistory, setImportHistory] = useState<ImportHistoryRow[]>(initialImportHistory);
 
@@ -161,6 +179,45 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const dismissToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
+
+  const switchUser = (userId: number) => {
+    const found = users.find((u) => u.id === userId);
+    if (found) {
+      setCurrentUser(found);
+      showToast(`👤 Switched workspace view to ${found.name} (${found.role})`, 'info');
+    }
+  };
+
+  // Role-Based Strict Data Isolation Filters
+  const userContacts = React.useMemo(() => {
+    if (currentUser.role === 'Admin') return contacts;
+    return contacts.filter((c) => c.assignedToId === currentUser.id);
+  }, [contacts, currentUser]);
+
+  const userDeals = React.useMemo(() => {
+    if (currentUser.role === 'Admin') return deals;
+    return deals.filter((d) => d.assignedToId === currentUser.id);
+  }, [deals, currentUser]);
+
+  const userTasks = React.useMemo(() => {
+    if (currentUser.role === 'Admin') return tasks;
+    return tasks.filter((t) => t.assignedToId === currentUser.id);
+  }, [tasks, currentUser]);
+
+  const userLeads = React.useMemo(() => {
+    if (currentUser.role === 'Admin') return leads;
+    return leads.filter((l) => l.assignedToId === currentUser.id);
+  }, [leads, currentUser]);
+
+  const userAppointments = React.useMemo(() => {
+    if (currentUser.role === 'Admin') return appointments;
+    return appointments.filter((a) => a.assignedToId === currentUser.id);
+  }, [appointments, currentUser]);
+
+  const userInvoices = React.useMemo(() => {
+    if (currentUser.role === 'Admin') return invoices;
+    return invoices.filter((i) => i.assignedToId === currentUser.id);
+  }, [invoices, currentUser]);
 
   const openModal = (modal: ModalType) => {
     setPrefillContact(null);
@@ -185,7 +242,12 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Contacts
   const addContact = (data: Omit<Contact, 'id'>) => {
     const nextId = contacts.reduce((m, c) => Math.max(m, c.id), 0) + 1;
-    const newContact: Contact = { id: nextId, ...data };
+    const newContact: Contact = {
+      id: nextId,
+      assignedToId: currentUser.id,
+      assignedToName: currentUser.name,
+      ...data,
+    };
 
     setContacts((prev) => [newContact, ...prev]);
     showToast(`Contact "${data.name}" added successfully!`);
@@ -206,6 +268,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             score: 'Warm',
             value: 10000,
             added: addedDate,
+            assignedToId: currentUser.id,
+            assignedToName: currentUser.name,
           },
           ...prevLeads,
         ];
@@ -263,6 +327,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           score: 'Warm',
           value: 12500,
           added: addedDate,
+          assignedToId: currentUser.id,
+          assignedToName: currentUser.name,
         },
         ...prevLeads,
       ];
@@ -316,6 +382,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           score: targetScore,
           value: 15000,
           added: addedDate,
+          assignedToId: currentUser.id,
+          assignedToName: currentUser.name,
         },
         ...prevLeads,
       ];
@@ -338,7 +406,12 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Deals
   const addDeal = (data: Omit<Deal, 'id'>) => {
     const nextId = deals.reduce((m, d) => Math.max(m, d.id), 0) + 1;
-    const newDeal = { id: nextId, ...data };
+    const newDeal = {
+      id: nextId,
+      assignedToId: currentUser.id,
+      assignedToName: currentUser.name,
+      ...data,
+    };
     setDeals((prev) => [newDeal, ...prev]);
 
     setContacts((prevContacts) => {
@@ -368,6 +441,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           email: `contact@${domain || 'company'}.com`,
           phone: '(555) 000-0000',
           status: data.stage === 'Lead' ? 'Lead' : 'Active',
+          assignedToId: currentUser.id,
+          assignedToName: currentUser.name,
         },
         ...prevContacts,
       ];
@@ -406,7 +481,16 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Tasks
   const addTask = (data: Omit<TaskItem, 'id' | 'done'>) => {
     const nextId = tasks.reduce((m, t) => Math.max(m, t.id), 0) + 1;
-    setTasks((prev) => [{ id: nextId, done: false, ...data }, ...prev]);
+    setTasks((prev) => [
+      {
+        id: nextId,
+        done: false,
+        assignedToId: currentUser.id,
+        assignedToName: currentUser.name,
+        ...data,
+      },
+      ...prev,
+    ]);
     showToast('Task added successfully!');
   };
 
@@ -451,7 +535,13 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addLead = (data: Omit<LeadItem, 'id' | 'added'>) => {
     const nextId = leads.reduce((m, l) => Math.max(m, l.id), 0) + 1;
     const added = new Date().toISOString().split('T')[0];
-    const newLead: LeadItem = { id: nextId, added, ...data };
+    const newLead: LeadItem = {
+      id: nextId,
+      added,
+      assignedToId: currentUser.id,
+      assignedToName: currentUser.name,
+      ...data,
+    };
 
     setLeads((prev) => [newLead, ...prev]);
 
@@ -467,6 +557,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           email: data.email,
           phone: '—',
           status: 'Lead',
+          assignedToId: currentUser.id,
+          assignedToName: currentUser.name,
         },
         ...prevContacts,
       ];
@@ -503,6 +595,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       contactName: lead.name,
       amount: lead.value || 15000,
       stage: 'Qualified',
+      assignedToId: currentUser.id,
+      assignedToName: currentUser.name,
     };
     setDeals((prev) => [newDeal, ...prev]);
 
@@ -521,7 +615,15 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Appointments
   const addAppointment = (data: Omit<Appointment, 'id'>) => {
     const nextId = appointments.reduce((m, a) => Math.max(m, a.id), 0) + 1;
-    setAppointments((prev) => [{ id: nextId, ...data }, ...prev]);
+    setAppointments((prev) => [
+      {
+        id: nextId,
+        assignedToId: currentUser.id,
+        assignedToName: currentUser.name,
+        ...data,
+      },
+      ...prev,
+    ]);
     showToast(`📅 Appointment scheduled for "${data.name}" on ${data.date}!`);
   };
 
@@ -616,11 +718,28 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Invoices
-  const addInvoice = (data: Omit<Invoice, 'id' | 'status'>) => {
-    const num = invoices.length + 5;
-    const id = `INV-${String(num).padStart(3, '0')}`;
-    setInvoices((prev) => [{ id, status: 'Pending', ...data }, ...prev]);
-    showToast(`🧾 Invoice ${id} ($${data.amount.toLocaleString()}) issued to ${data.client}!`);
+  const addInvoice = (data: Omit<Invoice, 'status'> & { status?: 'Paid' | 'Pending' | 'Overdue' | 'Cancelled' }) => {
+    setInvoices((prev) => [
+      {
+        status: data.status || 'Pending',
+        assignedToId: currentUser.id,
+        ...data,
+      },
+      ...prev,
+    ]);
+    showToast(`🧾 Invoice ${data.id} ($${data.amount.toLocaleString()}) issued to ${data.client}!`);
+  };
+
+  const updateInvoiceStatus = (id: string, status: string) => {
+    setInvoices((prev) =>
+      prev.map((inv) => (inv.id === id ? { ...inv, status: status as any } : inv))
+    );
+    showToast(`Invoice ${id} status updated to ${status}.`, 'info');
+  };
+
+  const deleteInvoice = (id: string) => {
+    setInvoices((prev) => prev.filter((inv) => inv.id !== id));
+    showToast(`Invoice ${id} deleted.`, 'info');
   };
 
   // Payments
@@ -634,7 +753,11 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Users
   const addUser = (data: Omit<UserMember, 'id' | 'status'>) => {
     const nextId = users.reduce((m, u) => Math.max(m, u.id), 0) + 1;
-    setUsers((prev) => [{ id: nextId, status: 'Active', ...data }, ...prev]);
+    const colors = ['#1D9E75', '#0284c7', '#7c3aed', '#ea580c'];
+    const avatarColor = colors[nextId % colors.length];
+    const newUser: UserMember = { id: nextId, status: 'Active', avatarColor, ...data };
+
+    setUsers((prev) => [...prev, newUser]);
     showToast(`👤 Team member "${data.name}" added as ${data.role}!`);
   };
 
@@ -663,9 +786,21 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setImportHistory((prev) => [row, ...prev]);
   };
 
+  const clearImportHistory = () => {
+    setImportHistory([]);
+    showToast('Import history cleared.', 'info');
+  };
+
+  const deleteImportHistoryRow = (index: number) => {
+    setImportHistory((prev) => prev.filter((_, i) => i !== index));
+    showToast('Import record removed.', 'info');
+  };
+
   return (
     <CRMContext.Provider
       value={{
+        currentUser,
+        switchUser,
         contacts,
         addContact,
         deleteContact,
@@ -703,6 +838,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteCampaign,
         invoices,
         addInvoice,
+        updateInvoiceStatus,
+        deleteInvoice,
         payments,
         addPayment,
         users,
@@ -712,6 +849,14 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toggleIntegration,
         importHistory,
         addImportHistory,
+        clearImportHistory,
+        deleteImportHistoryRow,
+        userContacts,
+        userDeals,
+        userTasks,
+        userLeads,
+        userAppointments,
+        userInvoices,
         searchQuery,
         setSearchQuery,
         activeModal,

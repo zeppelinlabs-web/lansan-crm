@@ -17,6 +17,7 @@ export const GlobalModals: React.FC = () => {
     addAutomation,
     addTemplate,
     addCampaign,
+    invoices,
     addInvoice,
     addPayment,
     addUser,
@@ -108,10 +109,19 @@ export const GlobalModals: React.FC = () => {
   const [campDate, setCampDate] = useState('');
 
   // Invoice Form State
+  const [invId, setInvId] = useState('INV-005');
   const [invClient, setInvClient] = useState('');
   const [invAmount, setInvAmount] = useState('');
   const [invDesc, setInvDesc] = useState('');
   const [invDue, setInvDue] = useState('');
+  const [invStatus, setInvStatus] = useState<'Pending' | 'Paid' | 'Overdue'>('Pending');
+
+  React.useEffect(() => {
+    if (activeModal === 'addInvoice') {
+      const nextNum = invoices.length + 5;
+      setInvId(`INV-${String(nextNum).padStart(3, '0')}`);
+    }
+  }, [invoices, activeModal]);
 
   // Charge Client State
   const [chClient, setChClient] = useState('');
@@ -757,10 +767,12 @@ export const GlobalModals: React.FC = () => {
         onSave={() => {
           if (!invClient) return;
           addInvoice({
+            id: invId,
             client: invClient,
             desc: invDesc || 'Services rendered',
             amount: parseInt(invAmount) || 0,
             due: invDue || 'TBD',
+            status: invStatus,
           });
           setInvClient('');
           setInvAmount('');
@@ -770,8 +782,28 @@ export const GlobalModals: React.FC = () => {
       >
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
+            <div className="form-label">Invoice # (Auto-generated)</div>
+            <input
+              type="text"
+              value={invId}
+              onChange={(e) => setInvId(e.target.value)}
+              style={{ fontWeight: 700, fontFamily: 'monospace' }}
+            />
+          </div>
+          <div className="form-group">
+            <div className="form-label">Initial Status</div>
+            <select value={invStatus} onChange={(e) => setInvStatus(e.target.value as any)}>
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div className="form-group">
             <div className="form-label">Client name</div>
-            <input type="text" placeholder="Acme Corp" value={invClient} onChange={(e) => setInvClient(e.target.value)} />
+            <input type="text" placeholder="Acme Corp" value={invClient} onChange={(e) => setInvClient(e.target.value)} list="company-list-options" />
           </div>
           <div className="form-group">
             <div className="form-label">Amount ($)</div>

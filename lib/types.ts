@@ -1,7 +1,27 @@
 export type StatusType = 
-  | 'Active' | 'Lead' | 'Inactive' | 'Paid' | 'Overdue' | 'Pending'
+  | 'Active' | 'Lead' | 'Inactive' | 'Paid' | 'Overdue' | 'Pending' | 'Cancelled'
   | 'Sent' | 'Draft' | 'Won' | 'Succeeded' | 'Failed' | 'High'
   | 'Medium' | 'Low' | 'In progress' | 'Closed' | 'Admin' | 'Manager' | 'Agent';
+
+/* 
+ * ============================================================================
+ * MULTI-TENANT SAAS ARCHITECTURE PREPARATION (COMMENTED OUT FOR SINGLE COMPANY):
+ * ============================================================================
+ * 
+ * export interface TenantOrganization {
+ *   tenantId: string; // e.g. "org_lansan_001"
+ *   name: string;     // e.g. "Lansan Connect Inc"
+ *   plan: 'Starter' | 'Pro' | 'Enterprise';
+ *   domain?: string;
+ *   createdAt: string;
+ * }
+ * 
+ * export interface TenantContext {
+ *   tenantId: string;
+ *   organization: TenantOrganization;
+ *   switchTenant: (tenantId: string) => void;
+ * }
+ */
 
 export interface Contact {
   id: number;
@@ -10,6 +30,9 @@ export interface Contact {
   email: string;
   phone: string;
   status: 'Active' | 'Lead' | 'Inactive';
+  assignedToId?: number;
+  assignedToName?: string;
+  /* tenantId?: string; */
 }
 
 export interface Deal {
@@ -20,6 +43,9 @@ export interface Deal {
   contactId?: number;
   amount: number;
   stage: 'Lead' | 'Qualified' | 'Proposal' | 'Negotiation';
+  assignedToId?: number;
+  assignedToName?: string;
+  /* tenantId?: string; */
 }
 
 export interface TaskItem {
@@ -28,6 +54,9 @@ export interface TaskItem {
   due: string;
   priority: 'High' | 'Medium' | 'Low';
   done: boolean;
+  assignedToId?: number;
+  assignedToName?: string;
+  /* tenantId?: string; */
 }
 
 export interface LeadItem {
@@ -39,6 +68,9 @@ export interface LeadItem {
   score: 'Hot' | 'Warm' | 'Cold';
   value: number;
   added: string;
+  assignedToId?: number;
+  assignedToName?: string;
+  /* tenantId?: string; */
 }
 
 export interface Appointment {
@@ -48,6 +80,9 @@ export interface Appointment {
   type: string;
   status: 'Confirmed' | 'Pending' | 'Cancelled';
   date: string;
+  assignedToId?: number;
+  assignedToName?: string;
+  /* tenantId?: string; */
 }
 
 export interface AutomationRule {
@@ -59,6 +94,7 @@ export interface AutomationRule {
   color: string;
   iconColor: string;
   on: boolean;
+  /* tenantId?: string; */
 }
 
 export interface AutomationLog {
@@ -67,6 +103,7 @@ export interface AutomationLog {
   triggeredBy: string;
   actionTaken: string;
   time: string;
+  /* tenantId?: string; */
 }
 
 export interface EmailTemplate {
@@ -74,6 +111,7 @@ export interface EmailTemplate {
   name: string;
   subject: string;
   body: string;
+  /* tenantId?: string; */
 }
 
 export interface Campaign {
@@ -84,6 +122,7 @@ export interface Campaign {
   opens: number;
   clicks: number;
   date: string;
+  /* tenantId?: string; */
 }
 
 export interface PaymentTransaction {
@@ -93,6 +132,7 @@ export interface PaymentTransaction {
   amount: number;
   date: string;
   status: 'Succeeded' | 'Failed' | 'Pending';
+  /* tenantId?: string; */
 }
 
 export interface Invoice {
@@ -101,7 +141,9 @@ export interface Invoice {
   desc: string;
   amount: number;
   due: string;
-  status: 'Paid' | 'Overdue' | 'Pending';
+  status: 'Paid' | 'Overdue' | 'Pending' | 'Cancelled';
+  assignedToId?: number;
+  /* tenantId?: string; */
 }
 
 export interface UserMember {
@@ -110,6 +152,8 @@ export interface UserMember {
   email: string;
   role: 'Admin' | 'Manager' | 'Agent';
   status: 'Active' | 'Inactive';
+  avatarColor?: string;
+  /* tenantId?: string; */
 }
 
 export interface IntegrationItem {
@@ -120,11 +164,13 @@ export interface IntegrationItem {
   ic: string;
   connected: boolean;
   url?: string;
+  /* tenantId?: string; */
 }
 
 export interface WebsiteBlock {
   id: number;
   type: 'hero' | 'text' | 'cta' | 'services' | 'contact';
+  /* tenantId?: string; */
 }
 
 export interface ImportHistoryRow {
@@ -133,4 +179,5 @@ export interface ImportHistoryRow {
   target: string;
   date: string;
   status: 'Success' | 'Failed';
+  /* tenantId?: string; */
 }
