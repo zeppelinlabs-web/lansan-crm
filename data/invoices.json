@@ -1,0 +1,6 @@
+[
+  { "id": "INV-001", "client": "Apex Solutions", "desc": "Call center services — April", "amount": 8200, "due": "2026-05-01", "status": "Paid" },
+  { "id": "INV-002", "client": "TechFlow Inc", "desc": "Platform onboarding — Q1", "amount": 4500, "due": "2026-05-15", "status": "Paid" },
+  { "id": "INV-003", "client": "Summit Group", "desc": "Services — April", "amount": 11800, "due": "2026-06-01", "status": "Overdue" },
+  { "id": "INV-004", "client": "Apex Solutions", "desc": "Call center services — May", "amount": 8200, "due": "2026-06-15", "status": "Pending" }
+]

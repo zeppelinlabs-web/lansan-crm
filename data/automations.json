@@ -1,0 +1,5 @@
+[
+  { "id": 1, "name": "New lead welcome email", "trigger": "Contact added with status Lead", "action": "Send welcome email template", "icon": "ti-bolt", "color": "#fef3c7", "iconColor": "#92400e", "on": true },
+  { "id": 2, "name": "Deal moved to Proposal notification", "trigger": "Deal moved to Proposal", "action": "Send internal notification", "icon": "ti-chart-bar", "color": "#e8f8f2", "iconColor": "#0F6E56", "on": true },
+  { "id": 3, "name": "Overdue invoice reminder", "trigger": "Invoice overdue 3 days", "action": "Send payment reminder email", "icon": "ti-receipt", "color": "#fee2e2", "iconColor": "#991b1b", "on": false }
+]

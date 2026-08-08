@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lansan CRM</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f5f7;color:#1a1a1a}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:210px;flex-shrink:0;background:#fff;border-right:1px solid #e8e8e8;display:flex;flex-direction:column;overflow-y:auto}
+.logo{padding:16px;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:9px}
+.logo-mark{width:30px;height:30px;background:#1D9E75;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+.logo-name{font-size:16px;font-weight:700;color:#111}
+.logo-tag{font-size:10px;color:#888;margin-top:1px}
+.nav{padding:8px;flex:1}
+.nav-section{font-size:10px;color:#aaa;padding:10px 8px 3px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;cursor:pointer;font-size:13px;color:#555;margin-bottom:1px;transition:background .12s,color .12s}
+.nav-item:hover{background:#f0fdf9;color:#0F6E56}
+.nav-item.active{background:#e8f8f2;color:#0F6E56;font-weight:600}
+.nav-item i{font-size:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:#dbeafe;color:#1d4ed8;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+.sidebar-footer{padding:12px;border-top:1px solid #e8e8e8}
+.user-row{display:flex;align-items:center;gap:8px}
+.avatar-sm{width:28px;height:28px;border-radius:50%;background:#e8f8f2;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0F6E56;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#111}
+.user-role{font-size:10px;color:#888}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{padding:11px 18px;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:12px;background:#fff;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:700;color:#111;flex:1}
+.search-wrap{position:relative;width:240px}
+.search-wrap input{width:100%;padding:7px 10px 7px 32px;border:1px solid #e0e0e0;border-radius:8px;font-size:13px;background:#f9f9f9;color:#111}
+.search-wrap i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:16px;color:#aaa}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid #d0d0d0;background:#fff;color:#333;font-weight:500;transition:background .12s}
+.btn:hover{background:#f5f5f5}
+.btn-primary{background:#1D9E75;color:#fff;border-color:#0F6E56}
+.btn-primary:hover{background:#0F6E56}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{background:transparent;color:#c0392b;border-color:transparent;padding:4px 7px}
+.btn-danger:hover{background:#fef2f2}
+.content{flex:1;overflow-y:auto;padding:18px}
+.panel{display:none}
+.panel.active{display:block}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat-card{background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:14px}
+.stat-label{font-size:11px;color:#888;margin-bottom:4px;font-weight:500}
+.stat-value{font-size:22px;font-weight:700;color:#111}
+.stat-sub{font-size:11px;color:#1D9E75;margin-top:2px;font-weight:500}
+.table-wrap{background:#fff;border:1px solid #e8e8e8;border-radius:12px;overflow:hidden;margin-bottom:16px}
+.table-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e8e8e8}
+.table-head-title{font-size:13px;font-weight:600;color:#111}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 16px;font-size:11px;color:#888;font-weight:600;border-bottom:1px solid #f0f0f0;background:#fafafa}
+td{padding:10px 16px;border-bottom:1px solid #f5f5f5;color:#222;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafff9}
+.pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+.pill-green{background:#e8f8f2;color:#0F6E56}
+.pill-amber{background:#fef3c7;color:#92400e}
+.pill-blue{background:#dbeafe;color:#1e40af}
+.pill-red{background:#fee2e2;color:#991b1b}
+.pill-gray{background:#f3f4f6;color:#6b7280}
+.pill-purple{background:#ede9fe;color:#5b21b6}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:16px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;margin-bottom:12px;color:#111}
+.pipeline-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.pipeline-col{background:#f7f8fa;border:1px solid #e8e8e8;border-radius:12px;padding:10px;min-height:200px}
+.col-header{font-size:11px;font-weight:700;color:#666;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em}
+.col-count{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:1px 7px;font-size:11px;color:#666}
+.deal-card{background:#fff;border:1px solid #e0e0e0;border-radius:9px;padding:10px;margin-bottom:8px;cursor:pointer}
+.deal-card:hover{border-color:#1D9E75;box-shadow:0 1px 4px rgba(29,158,117,.1)}
+.deal-name{font-size:13px;font-weight:600;margin-bottom:3px}
+.deal-co{font-size:11px;color:#888;margin-bottom:6px}
+.deal-amount{font-size:12px;color:#0F6E56;font-weight:700}
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.form-label{font-size:11px;font-weight:600;color:#666}
+.form-group input,.form-group select,.form-group textarea{padding:7px 10px;border:1px solid #d0d0d0;border-radius:7px;font-size:13px;color:#111;background:#fff}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#1D9E75}
+.auto-rule{background:#f9fafb;border:1px solid #e8e8e8;border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:11px;margin-bottom:8px}
+.auto-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.auto-info{flex:1;min-width:0}
+.auto-name{font-size:13px;font-weight:600;color:#111}
+.auto-desc{font-size:11px;color:#888;margin-top:1px}
+.toggle{width:36px;height:20px;border-radius:10px;background:#d1d5db;position:relative;cursor:pointer;flex-shrink:0;border:none;transition:background .2s}
+.toggle.on{background:#1D9E75}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{left:18px}
+.tpl-card{background:#f9fafb;border:1px solid #e8e8e8;border-radius:10px;padding:11px 14px;margin-bottom:8px;cursor:pointer}
+.tpl-card:hover{border-color:#1D9E75;background:#f0fdf9}
+.tpl-card-title{font-size:13px;font-weight:600;color:#111;margin-bottom:2px}
+.tpl-card-prev{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.campaign-card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:14px;margin-bottom:12px}
+.campaign-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.c-stat{text-align:center;background:#f7f8fa;border-radius:8px;padding:8px 4px}
+.c-stat-val{font-size:18px;font-weight:700;color:#111}
+.c-stat-label{font-size:10px;color:#888;margin-top:1px;font-weight:500}
+.stripe-banner{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.stripe-logo{font-size:14px;font-weight:800;color:#1e40af;background:#fff;border:1px solid #bfdbfe;border-radius:7px;padding:5px 12px;letter-spacing:.02em}
+.license-banner{background:#f0fdf9;border:1px solid #6ee7b7;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.ai-msgs{height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;padding:4px 0}
+.ai-msg{display:flex;gap:8px;align-items:flex-start}
+.ai-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.ai-avatar.user{background:#e8f8f2;color:#0F6E56}
+.ai-avatar.bot{background:#ede9fe;color:#5b21b6}
+.ai-bubble{border-radius:10px;padding:9px 13px;font-size:13px;line-height:1.6;max-width:88%}
+.ai-bubble.bot{background:#f3f4f6;color:#111}
+.ai-bubble.user{background:#e8f8f2;color:#064e3b}
+.ai-input-row{display:flex;gap:8px}
+.ai-input-row input{flex:1;padding:9px 12px;border:1px solid #d0d0d0;border-radius:8px;font-size:13px;color:#111}
+/* IMPORT */
+.import-drop{border:2px dashed #d0d0d0;border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fafafa;margin-bottom:16px}
+.import-drop:hover,.import-drop.drag-over{border-color:#1D9E75;background:#f0fdf9}
+.import-drop i{font-size:36px;color:#aaa;margin-bottom:10px;display:block}
+.import-drop.drag-over i{color:#1D9E75}
+.import-drop-title{font-size:14px;font-weight:700;color:#333;margin-bottom:4px}
+.import-drop-sub{font-size:12px;color:#888}
+.import-preview{background:#fff;border:1px solid #e8e8e8;border-radius:12px;overflow:hidden;margin-bottom:16px}
+.import-preview table{font-size:12px}
+.import-map{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.import-map-row{display:flex;align-items:center;gap:8px;background:#f9fafb;border-radius:8px;padding:8px 10px;font-size:12px}
+.import-map-row span{flex:1;font-weight:600;color:#333}
+.import-map-row select{flex:1;font-size:12px;padding:4px 7px;border:1px solid #d0d0d0;border-radius:6px}
+.import-progress{background:#e8f8f2;border-radius:10px;overflow:hidden;height:8px;margin:8px 0}
+.import-progress-bar{height:100%;background:#1D9E75;border-radius:10px;transition:width .4s}
+.import-step{display:none}.import-step.active{display:block}
+/* INTEGRATIONS */
+.int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.int-card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.int-card:hover{border-color:#1D9E75;box-shadow:0 2px 12px rgba(29,158,117,.08)}
+.int-logo{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.int-name{font-size:13px;font-weight:700;color:#111}
+.int-desc{font-size:11px;color:#888;line-height:1.5;flex:1}
+.int-status{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.int-connected{font-size:11px;color:#0F6E56;font-weight:600;display:flex;align-items:center;gap:4px}
+.int-connect-btn{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid #1D9E75;color:#1D9E75;background:#fff;cursor:pointer;font-weight:600}
+.int-connect-btn:hover{background:#e8f8f2}
+.int-connect-btn.connected{background:#e8f8f2;border-color:#6ee7b7;color:#059669;cursor:default}
+.zapier-banner{background:linear-gradient(135deg,#ff4a00,#ff8c00);border-radius:12px;padding:18px 20px;color:#fff;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.zapier-banner i{font-size:28px;opacity:.9}
+.zapier-text h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.zapier-text p{font-size:12px;opacity:.85}
+.api-box{background:#1e293b;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:12px;color:#e2e8f0;margin-bottom:12px;position:relative}
+.api-box .copy-btn{position:absolute;top:10px;right:10px;background:#334155;border:none;color:#94a3b8;font-size:11px;padding:3px 8px;border-radius:5px;cursor:pointer}
+.api-box .copy-btn:hover{background:#475569;color:#fff}
+.ai-chip{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #d0d0d0;cursor:pointer;color:#555;background:#fff;margin-right:5px;margin-bottom:5px;display:inline-block;font-weight:500}
+.ai-chip:hover{background:#f0fdf9;border-color:#1D9E75;color:#0F6E56}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;border:1px solid #e0e0e0;padding:22px;width:480px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:14px;color:#111}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:1px solid #f0f0f0}
+
+/* LEAD GEN */
+.lead-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.lead-col{background:#f7f8fa;border:1px solid #e8e8e8;border-radius:12px;padding:10px;min-height:180px}
+.lead-col-header{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.lead-card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:9px;margin-bottom:7px;font-size:12px}
+.lead-card:hover{border-color:#1D9E75;cursor:pointer}
+.lead-card-name{font-weight:600;color:#111;margin-bottom:2px}
+.lead-card-meta{color:#888;font-size:11px;margin-bottom:5px}
+.lead-card-score{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.score-hot{background:#fee2e2;color:#991b1b}
+.score-warm{background:#fef3c7;color:#92400e}
+.score-cold{background:#dbeafe;color:#1e40af}
+.lead-source-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.source-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #e0e0e0;cursor:pointer;background:#fff;color:#555}
+.source-chip.active{background:#1D9E75;color:#fff;border-color:#0F6E56}
+.source-chip:hover{background:#f0fdf9;color:#0F6E56}
+
+/* APPOINTMENTS */
+.appt-grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+.calendar-wrap{background:#fff;border:1px solid #e8e8e8;border-radius:12px;overflow:hidden}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e8e8e8}
+.cal-title{font-size:14px;font-weight:700}
+.cal-nav{display:flex;gap:4px}
+.cal-nav button{background:none;border:1px solid #e0e0e0;border-radius:7px;padding:4px 10px;cursor:pointer;font-size:13px;color:#555}
+.cal-nav button:hover{background:#f0fdf9;color:#0F6E56}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid #f0f0f0}
+.cal-day-label{text-align:center;padding:8px 4px;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;border-bottom:1px solid #f0f0f0;border-right:1px solid #f0f0f0}
+.cal-day-label:last-child{border-right:none}
+.cal-day{min-height:72px;padding:6px;border-right:1px solid #f5f5f5;border-bottom:1px solid #f5f5f5;cursor:pointer;position:relative}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day:hover{background:#f0fdf9}
+.cal-day.today{background:#e8f8f2}
+.cal-day.other-month{background:#fafafa}
+.cal-day-num{font-size:11px;font-weight:600;color:#666;margin-bottom:4px}
+.cal-day.today .cal-day-num{color:#0F6E56;font-size:12px}
+.appt-dot{font-size:10px;padding:1px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.appt-dot.confirmed{background:#e8f8f2;color:#0F6E56}
+.appt-dot.pending{background:#fef3c7;color:#92400e}
+.appt-dot.cancelled{background:#fee2e2;color:#991b1b}
+.appt-sidebar{display:flex;flex-direction:column;gap:10px}
+.appt-card{background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px}
+.appt-card-title{font-size:12px;font-weight:700;margin-bottom:8px}
+.appt-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #f5f5f5}
+.appt-item:last-child{border-bottom:none}
+.appt-time{font-size:11px;font-weight:700;color:#0F6E56;width:50px;flex-shrink:0;padding-top:1px}
+.appt-info{flex:1;min-width:0}
+.appt-name{font-size:12px;font-weight:600;color:#111}
+.appt-type{font-size:11px;color:#888}
+.appt-actions{display:flex;gap:4px;flex-shrink:0}
+.booking-link-box{background:#f0fdf9;border:1px solid #6ee7b7;border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px}
+.booking-url{font-size:12px;color:#0F6E56;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-sm btn-primary" id="modalSaveBtn" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">L</div>
+    <div><div class="logo-name">Lansan</div><div class="logo-tag">CRM Platform</div></div>
+  </div>
+  <div class="nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="nav('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item" onclick="nav('contacts',this)"><i class="ti ti-users"></i> Contacts</div>
+    <div class="nav-item" onclick="nav('pipeline',this)"><i class="ti ti-chart-bar"></i> Pipeline</div>
+    <div class="nav-item" onclick="nav('tasks',this)"><i class="ti ti-checkbox"></i> Tasks <span class="nav-badge" id="task-badge">3</span></div>
+    <div class="nav-section">Growth</div>
+    <div class="nav-item" onclick="nav('leads',this)"><i class="ti ti-target"></i> Lead generation</div>
+    <div class="nav-item" onclick="nav('appointments',this)"><i class="ti ti-calendar-event"></i> Appointments <span class="nav-badge" id="appt-badge">4</span></div>
+    <div class="nav-section">Marketing</div>
+    <div class="nav-item" onclick="nav('automations',this)"><i class="ti ti-bolt"></i> Automations</div>
+    <div class="nav-item" onclick="nav('templates',this)"><i class="ti ti-template"></i> Email templates</div>
+    <div class="nav-item" onclick="nav('campaigns',this)"><i class="ti ti-speakerphone"></i> Campaigns</div>
+    <div class="nav-section">Finance</div>
+    <div class="nav-item" onclick="nav('payments',this)"><i class="ti ti-credit-card"></i> Payments</div>
+    <div class="nav-item" onclick="nav('invoices',this)"><i class="ti ti-file-invoice"></i> Invoices</div>
+    <div class="nav-section">Insights</div>
+    <div class="nav-item" onclick="nav('reports',this)"><i class="ti ti-chart-line"></i> Reports</div>
+    <div class="nav-section">Tools</div>
+    <div class="nav-item" onclick="nav('import',this)"><i class="ti ti-database-import"></i> Import data</div>
+    <div class="nav-item" onclick="nav('website',this)"><i class="ti ti-world"></i> Website builder</div>
+    <div class="nav-item" onclick="nav('ai',this)"><i class="ti ti-sparkles"></i> AI assistant</div>
+    <div class="nav-section">Admin</div>
+    <div class="nav-item" onclick="nav('users',this)"><i class="ti ti-lock"></i> Users &amp; licenses</div>
+    <div class="nav-item" onclick="nav('integrations',this)"><i class="ti ti-plug"></i> Integrations</div>
+    <div class="nav-item" onclick="nav('settings',this)"><i class="ti ti-settings"></i> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar-sm">LA</div>
+      <div><div class="user-name">LaToya</div><div class="user-role">Admin · Lansan</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="pageTitle">Dashboard</div>
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input type="text" placeholder="Search Lansan...">
+    </div>
+    <button class="btn btn-primary" onclick="topbarAction()"><i class="ti ti-plus"></i> <span id="topbarBtnLabel">Add contact</span></button>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total contacts</div><div class="stat-value" id="s-contacts">3</div><div class="stat-sub">Unlimited capacity</div></div>
+        <div class="stat-card"><div class="stat-label">Pipeline value</div><div class="stat-value" id="s-value">$76,700</div><div class="stat-sub">Active deals</div></div>
+        <div class="stat-card"><div class="stat-label">Revenue collected</div><div class="stat-value">$24,500</div><div class="stat-sub">Via Stripe</div></div>
+        <div class="stat-card"><div class="stat-label">Emails sent</div><div class="stat-value">1,240</div><div class="stat-sub">This month</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Recent activity</div>
+          <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;color:#555">
+            <div style="display:flex;gap:9px;align-items:center"><i class="ti ti-bolt" style="color:#d97706;font-size:16px"></i> Automation fired — New lead welcome email</div>
+            <div style="display:flex;gap:9px;align-items:center"><i class="ti ti-speakerphone" style="color:#7c3aed;font-size:16px"></i> Campaign sent — Q2 Spring Outreach (420 recipients)</div>
+            <div style="display:flex;gap:9px;align-items:center"><i class="ti ti-receipt" style="color:#1D9E75;font-size:16px"></i> Invoice paid — INV-004 · $8,200</div>
+            <div style="display:flex;gap:9px;align-items:center"><i class="ti ti-user-plus" style="color:#2563eb;font-size:16px"></i> Contact added — Daria Rowe</div>
+            <div style="display:flex;gap:9px;align-items:center"><i class="ti ti-chart-bar" style="color:#d85a30;font-size:16px"></i> Deal moved to Negotiation — Summit Group</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Upcoming tasks</div>
+          <div id="dash-tasks" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Revenue overview — 2026</div>
+        <canvas id="dash-chart" height="100"></canvas>
+      </div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="panel" id="panel-contacts">
+      <div class="table-wrap">
+        <div class="table-head">
+          <span class="table-head-title">All contacts (<span id="contact-count">3</span>)</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm" onclick="nav('import',document.querySelector('[onclick*=import]'))"><i class="ti ti-upload"></i> Import</button>
+            <button class="btn btn-sm btn-primary" onclick="openAddContact()"><i class="ti ti-plus"></i> Add contact</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Status</th><th></th></tr></thead>
+          <tbody id="contact-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PIPELINE -->
+    <div class="panel" id="panel-pipeline">
+      <div class="pipeline-cols" id="pipeline-board"></div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="panel" id="panel-tasks">
+      <div class="table-wrap">
+        <div class="table-head">
+          <span class="table-head-title">Tasks</span>
+          <button class="btn btn-sm btn-primary" onclick="openAddTask()"><i class="ti ti-plus"></i> Add task</button>
+        </div>
+        <table>
+          <thead><tr><th style="width:38%">Task</th><th>Due</th><th>Priority</th><th>Status</th><th></th></tr></thead>
+          <tbody id="task-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AUTOMATIONS -->
+    <div class="panel" id="panel-automations">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="card-title" style="margin:0">Automation rules</div>
+          <button class="btn btn-sm btn-primary" onclick="openAddAutomation()"><i class="ti ti-plus"></i> New rule</button>
+        </div>
+        <div id="auto-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Automation log</div>
+        <table><thead><tr><th>Rule</th><th>Triggered by</th><th>Action taken</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td>New lead welcome</td><td>Marcus Webb added</td><td>Email sent</td><td>2h ago</td></tr>
+          <tr><td>Deal won notify</td><td>Apex contract closed</td><td>Slack DM sent</td><td>1d ago</td></tr>
+          <tr><td>Follow-up reminder</td><td>No activity 7 days</td><td>Task created</td><td>2d ago</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- TEMPLATES -->
+    <div class="panel" id="panel-templates">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700">Email templates</div>
+        <button class="btn btn-sm btn-primary" onclick="openAddTemplate()"><i class="ti ti-plus"></i> New template</button>
+      </div>
+      <div class="two-col">
+        <div id="tpl-list"></div>
+        <div class="card" style="height:fit-content">
+          <div class="card-title">Preview</div>
+          <div id="tpl-preview" style="font-size:13px;color:#888">Select a template to preview.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAMPAIGNS -->
+    <div class="panel" id="panel-campaigns">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700">Email campaigns</div>
+        <button class="btn btn-sm btn-primary" onclick="openAddCampaign()"><i class="ti ti-plus"></i> New campaign</button>
+      </div>
+      <div id="campaign-list"></div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="panel" id="panel-payments">
+      <div class="stripe-banner">
+        <div class="stripe-logo">stripe</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#1e40af">Stripe connected</div>
+          <div style="font-size:12px;color:#3b82f6">Payments processed securely via Stripe. Funds deposit in 2 business days.</div>
+        </div>
+        <button class="btn btn-sm" style="border-color:#bfdbfe;color:#1e40af"><i class="ti ti-settings"></i> Manage</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total collected</div><div class="stat-value">$24,500</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card"><div class="stat-label">This month</div><div class="stat-value">$8,200</div><div class="stat-sub">+18% vs last month</div></div>
+        <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value">$14,700</div><div class="stat-sub">Awaiting payment</div></div>
+        <div class="stat-card"><div class="stat-label">Refunds</div><div class="stat-value">$0</div><div class="stat-sub">This month</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-head">
+          <span class="table-head-title">Recent transactions</span>
+          <button class="btn btn-sm btn-primary" onclick="openChargeModal()"><i class="ti ti-credit-card"></i> Charge client</button>
+        </div>
+        <table><thead><tr><th>ID</th><th>Client</th><th>Description</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="payment-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="panel" id="panel-invoices">
+      <div class="table-wrap">
+        <div class="table-head">
+          <span class="table-head-title">Invoices (<span id="inv-count">4</span>)</span>
+          <button class="btn btn-sm btn-primary" onclick="openAddInvoice()"><i class="ti ti-plus"></i> Create invoice</button>
+        </div>
+        <table><thead><tr><th>Invoice #</th><th>Client</th><th>Description</th><th>Amount</th><th>Due date</th><th>Status</th></tr></thead>
+        <tbody id="invoice-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="panel" id="panel-reports">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Deals won</div><div class="stat-value">7</div><div class="stat-sub">This quarter</div></div>
+        <div class="stat-card"><div class="stat-label">Win rate</div><div class="stat-value">64%</div><div class="stat-sub">Up from 58%</div></div>
+        <div class="stat-card"><div class="stat-label">Avg deal size</div><div class="stat-value">$19.2k</div><div class="stat-sub">Up 12%</div></div>
+        <div class="stat-card"><div class="stat-label">Email open rate</div><div class="stat-value">38%</div><div class="stat-sub">Industry avg 22%</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card"><div class="card-title">Pipeline by stage</div><canvas id="report-pipeline" height="160"></canvas></div>
+        <div class="card"><div class="card-title">Revenue by month</div><canvas id="report-revenue" height="160"></canvas></div>
+      </div>
+      <div class="two-col">
+        <div class="card"><div class="card-title">Campaign performance</div><canvas id="report-campaigns" height="140"></canvas></div>
+        <div class="card"><div class="card-title">Contact growth</div><canvas id="report-contacts" height="140"></canvas></div>
+      </div>
+    </div>
+
+    <!-- WEBSITE -->
+    <div class="panel" id="panel-website">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div class="card">
+            <div class="card-title">Page builder</div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px">
+              <button class="btn btn-sm" onclick="addBlock('hero')"><i class="ti ti-layout-navbar"></i> Hero</button>
+              <button class="btn btn-sm" onclick="addBlock('text')"><i class="ti ti-text-size"></i> Text</button>
+              <button class="btn btn-sm" onclick="addBlock('cta')"><i class="ti ti-hand-finger"></i> CTA</button>
+              <button class="btn btn-sm" onclick="addBlock('services')"><i class="ti ti-list"></i> Services</button>
+              <button class="btn btn-sm" onclick="addBlock('contact')"><i class="ti ti-mail"></i> Contact form</button>
+              <button class="btn btn-sm btn-primary" onclick="publishSite()"><i class="ti ti-upload"></i> Publish</button>
+            </div>
+            <div id="wb-blocks"><p style="font-size:13px;color:#aaa;text-align:center;padding:18px 0">Click a block type above to start building.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Live preview</div>
+          <div id="wb-preview" style="background:#fff;border:1px solid #e8e8e8;border-radius:8px;padding:18px;font-family:sans-serif;font-size:14px;min-height:200px">
+            <p style="color:#aaa;font-size:13px">Add blocks to preview your site.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI -->
+    <div class="panel" id="panel-ai">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-sparkles" style="color:#7c3aed;margin-right:6px"></i>Lansan AI assistant</div>
+        <div style="margin-bottom:10px">
+          <span class="ai-chip" onclick="aiChip('Summarize my pipeline')">Summarize pipeline</span>
+          <span class="ai-chip" onclick="aiChip('Draft a follow-up email for a new lead')">Draft follow-up email</span>
+          <span class="ai-chip" onclick="aiChip('Write a subject line for a new campaign')">Campaign subject line</span>
+          <span class="ai-chip" onclick="aiChip('What automations should I set up for my business?')">Automation ideas</span>
+          <span class="ai-chip" onclick="aiChip('Write an invoice reminder email')">Invoice reminder email</span>
+        </div>
+        <div class="ai-msgs" id="ai-msgs">
+          <div class="ai-msg">
+            <div class="ai-avatar bot">AI</div>
+            <div class="ai-bubble bot">Hi! I'm Lansan AI. I can draft emails, summarize your pipeline, write campaign copy, suggest automations, generate invoice reminders, and more. What do you need?</div>
+          </div>
+        </div>
+        <div class="ai-input-row">
+          <input type="text" id="ai-input" placeholder="Ask Lansan AI anything..." onkeydown="if(event.key==='Enter')sendAI()">
+          <button class="btn btn-primary" onclick="sendAI()"><i class="ti ti-send"></i> Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="panel" id="panel-users">
+      <div class="license-banner">
+        <i class="ti ti-infinity" style="color:#0F6E56;font-size:22px"></i>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#064e3b">Unlimited licenses &amp; users</div>
+          <div style="font-size:12px;color:#059669">Add as many team members as needed — no seat caps, ever.</div>
+        </div>
+        <button class="btn btn-sm btn-primary" onclick="openAddUser()"><i class="ti ti-user-plus"></i> Add user</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-head"><span class="table-head-title">Team members (<span id="user-count">3</span>)</span></div>
+        <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
+        <tbody id="user-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- LEAD GENERATION -->
+    <div class="panel" id="panel-leads">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total leads</div><div class="stat-value" id="lg-total">12</div><div class="stat-sub">All sources</div></div>
+        <div class="stat-card"><div class="stat-label">Hot leads</div><div class="stat-value" id="lg-hot">4</div><div class="stat-sub">Ready to contact</div></div>
+        <div class="stat-card"><div class="stat-label">Converted</div><div class="stat-value" id="lg-converted">3</div><div class="stat-sub">This month</div></div>
+        <div class="stat-card"><div class="stat-label">Avg. response</div><div class="stat-value">2.4h</div><div class="stat-sub">Lead response time</div></div>
+      </div>
+
+      <!-- Source filter + Add -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="lead-source-bar" id="lead-source-bar">
+          <div class="source-chip active" onclick="filterLeads('All',this)">All</div>
+          <div class="source-chip" onclick="filterLeads('Website',this)">Website</div>
+          <div class="source-chip" onclick="filterLeads('Referral',this)">Referral</div>
+          <div class="source-chip" onclick="filterLeads('LinkedIn',this)">LinkedIn</div>
+          <div class="source-chip" onclick="filterLeads('Cold outreach',this)">Cold outreach</div>
+          <div class="source-chip" onclick="filterLeads('Import',this)">Import</div>
+          <div class="source-chip" onclick="filterLeads('Ad campaign',this)">Ad campaign</div>
+        </div>
+        <button class="btn btn-sm btn-primary" onclick="openAddLead()"><i class="ti ti-plus"></i> Add lead</button>
+      </div>
+
+      <!-- Kanban board -->
+      <div class="lead-cols" id="lead-board"></div>
+
+      <!-- Lead table -->
+      <div class="table-wrap">
+        <div class="table-head">
+          <span class="table-head-title">All leads (<span id="lead-count">12</span>)</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm" onclick="nav('import',document.querySelector('[onclick*=import]'))"><i class="ti ti-upload"></i> Bulk import</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Company</th><th>Source</th><th>Score</th><th>Stage</th><th>Owner</th><th>Added</th><th></th></tr></thead>
+          <tbody id="lead-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="panel" id="panel-appointments">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">This week</div><div class="stat-value" id="appt-week">6</div><div class="stat-sub">Scheduled</div></div>
+        <div class="stat-card"><div class="stat-label">Confirmed</div><div class="stat-value" id="appt-confirmed">4</div><div class="stat-sub">Ready to go</div></div>
+        <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value" id="appt-pending">2</div><div class="stat-sub">Awaiting confirmation</div></div>
+        <div class="stat-card"><div class="stat-label">Show rate</div><div class="stat-value">84%</div><div class="stat-sub">Last 30 days</div></div>
+      </div>
+
+      <div class="appt-grid">
+        <!-- Calendar -->
+        <div class="calendar-wrap">
+          <div class="cal-header">
+            <div class="cal-title" id="cal-title">June 2026</div>
+            <div class="cal-nav">
+              <button onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
+              <button onclick="changeMonth(0)">Today</button>
+              <button onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+
+        <!-- Sidebar: today's appointments + booking link -->
+        <div class="appt-sidebar">
+          <div class="appt-card">
+            <div class="appt-card-title">Today's appointments</div>
+            <div id="appt-today-list"></div>
+          </div>
+          <div class="appt-card">
+            <div class="appt-card-title">Upcoming</div>
+            <div id="appt-upcoming-list"></div>
+          </div>
+          <div class="booking-link-box">
+            <i class="ti ti-link" style="color:#0F6E56;font-size:18px;flex-shrink:0"></i>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:11px;font-weight:700;color:#064e3b;margin-bottom:2px">Your booking link</div>
+              <div class="booking-url">lansancrm.com/book/latoya</div>
+            </div>
+            <button class="btn btn-sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('lansancrm.com/book/latoya');this.textContent='Copied!';setTimeout(()=>this.innerHTML='<i class=\'ti ti-copy\'></i>',1500)"><i class="ti ti-copy"></i></button>
+          </div>
+          <button class="btn btn-primary" onclick="openAddAppt()" style="width:100%"><i class="ti ti-plus"></i> Schedule appointment</button>
+        </div>
+      </div>
+
+      <!-- All appointments table -->
+      <div class="table-wrap" style="margin-top:16px">
+        <div class="table-head"><span class="table-head-title">All appointments (<span id="all-appt-count">0</span>)</span></div>
+        <table>
+          <thead><tr><th>Contact</th><th>Type</th><th>Date & time</th><th>Duration</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="appt-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- IMPORT -->
+    <div class="panel" id="panel-import">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div>
+            <div class="card-title" style="margin:0">Bulk data import</div>
+            <div style="font-size:12px;color:#888;margin-top:3px">Upload a CSV or Excel file to import contacts or leads in bulk</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm" onclick="downloadTemplate()"><i class="ti ti-download"></i> Download template</button>
+          </div>
+        </div>
+
+        <!-- STEP 1: Upload -->
+        <div class="import-step active" id="import-step-1">
+          <div class="import-drop" id="import-drop" onclick="document.getElementById('import-file').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+            <i class="ti ti-cloud-upload"></i>
+            <div class="import-drop-title">Drag & drop your file here</div>
+            <div class="import-drop-sub">Supports .CSV and .XLSX · Up to 50,000 rows</div>
+            <div style="margin-top:14px"><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();document.getElementById('import-file').click()"><i class="ti ti-folder-open"></i> Browse file</button></div>
+          </div>
+          <input type="file" id="import-file" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileSelect(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:4px">
+            <div style="background:#f9fafb;border-radius:8px;padding:12px;text-align:center">
+              <i class="ti ti-file-spreadsheet" style="font-size:22px;color:#0F6E56;display:block;margin-bottom:6px"></i>
+              <div style="font-size:12px;font-weight:700;color:#111">CSV / Excel</div>
+              <div style="font-size:11px;color:#888">Any spreadsheet export</div>
+            </div>
+            <div style="background:#f9fafb;border-radius:8px;padding:12px;text-align:center">
+              <i class="ti ti-database-import" style="font-size:22px;color:#7c3aed;display:block;margin-bottom:6px"></i>
+              <div style="font-size:12px;font-weight:700;color:#111">Up to 50k rows</div>
+              <div style="font-size:11px;color:#888">Mass import support</div>
+            </div>
+            <div style="background:#f9fafb;border-radius:8px;padding:12px;text-align:center">
+              <i class="ti ti-map" style="font-size:22px;color:#d97706;display:block;margin-bottom:6px"></i>
+              <div style="font-size:12px;font-weight:700;color:#111">Column mapping</div>
+              <div style="font-size:11px;color:#888">Match fields visually</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Map columns -->
+        <div class="import-step" id="import-step-2">
+          <div style="background:#e8f8f2;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px">
+            <i class="ti ti-file-check" style="color:#0F6E56;font-size:18px"></i>
+            <div><strong id="import-filename">file.csv</strong> loaded — <span id="import-row-count">0</span> rows detected</div>
+          </div>
+          <div class="card-title">Map your columns to Lansan fields</div>
+          <div class="import-map" id="import-map-rows"></div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-sm" onclick="goImportStep(1)"><i class="ti ti-arrow-left"></i> Back</button>
+            <button class="btn btn-sm btn-primary" onclick="goImportStep(3)"><i class="ti ti-eye"></i> Preview import</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Preview -->
+        <div class="import-step" id="import-step-3">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div class="card-title" style="margin:0">Preview — first 5 rows</div>
+            <div style="font-size:12px;color:#888"><span id="preview-total">0</span> total records ready to import</div>
+          </div>
+          <div class="import-preview">
+            <table id="preview-table">
+              <thead><tr id="preview-head"></tr></thead>
+              <tbody id="preview-body"></tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-sm" onclick="goImportStep(2)"><i class="ti ti-arrow-left"></i> Back</button>
+            <button class="btn btn-sm btn-primary" onclick="runImport()"><i class="ti ti-database-import"></i> Import all records</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Done -->
+        <div class="import-step" id="import-step-4">
+          <div style="text-align:center;padding:30px 0">
+            <div style="width:60px;height:60px;background:#e8f8f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+              <i class="ti ti-circle-check" style="font-size:30px;color:#1D9E75"></i>
+            </div>
+            <div style="font-size:18px;font-weight:700;color:#111;margin-bottom:6px">Import complete!</div>
+            <div style="font-size:13px;color:#888;margin-bottom:4px"><span id="import-done-count">0</span> records imported successfully</div>
+            <div class="import-progress" style="max-width:300px;margin:16px auto"><div class="import-progress-bar" id="import-bar" style="width:0%"></div></div>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:18px">
+              <button class="btn btn-sm" onclick="goImportStep(1);resetImport()">Import another file</button>
+              <button class="btn btn-sm btn-primary" onclick="nav('contacts',document.querySelector('[onclick*=contacts]'))"><i class="ti ti-users"></i> View contacts</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Import history -->
+      <div class="card">
+        <div class="card-title">Import history</div>
+        <table><thead><tr><th>File</th><th>Records</th><th>Type</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="import-history-tbody">
+          <tr><td>contacts_q2_2026.csv</td><td>428</td><td>Contacts</td><td>2026-06-01</td><td><span class="pill pill-green">Success</span></td></tr>
+          <tr><td>leads_spring_outreach.xlsx</td><td>1,240</td><td>Leads</td><td>2026-05-18</td><td><span class="pill pill-green">Success</span></td></tr>
+          <tr><td>old_crm_export.csv</td><td>3,892</td><td>Contacts</td><td>2026-04-30</td><td><span class="pill pill-amber">Partial (12 errors)</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- INTEGRATIONS -->
+    <div class="panel" id="panel-integrations">
+
+      <div class="zapier-banner">
+        <i class="ti ti-bolt"></i>
+        <div class="zapier-text">
+          <h3>Connect Lansan to 6,000+ apps via Zapier</h3>
+          <p>Automate workflows between Lansan and any tool — no code required. Trigger actions in Lansan from Gmail, Slack, Typeform, Calendly, and more.</p>
+        </div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.4);color:#fff;flex-shrink:0" onclick="window.open('https://zapier.com/developer/public-invite/242513/339575cbc8defa190ce1c1b20f72bdd5/','_blank')">Connect Zapier</button>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:12px">Native integrations</div>
+      <div class="int-grid" id="int-grid"></div>
+
+      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:12px">API access</div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">Lansan REST API</div>
+        <div style="font-size:12px;color:#888;margin-bottom:12px">Use the Lansan API to push or pull data programmatically — contacts, deals, leads, invoices, and more.</div>
+        <div class="api-box">
+          <span style="color:#94a3b8">// POST contacts in bulk</span><br>
+          POST https://api.lansancrm.com/v1/contacts/bulk<br>
+          Authorization: Bearer <span style="color:#86efac">YOUR_API_KEY</span><br>
+          Content-Type: application/json<br><br>
+          <span style="color:#94a3b8">// Body: array of contact objects</span>
+          <button class="copy-btn" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-primary"><i class="ti ti-key"></i> Generate API key</button>
+          <button class="btn btn-sm"><i class="ti ti-book"></i> View API docs</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel" id="panel-settings">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Company settings</div>
+          <div class="form-group"><div class="form-label">Company name</div><input type="text" value="Lansan Connect"></div>
+          <div class="form-group"><div class="form-label">Industry</div><select><option>Choose your industry</option><option>Real estate</option><option>Technology</option><option>Consulting</option><option>Healthcare</option><option>Retail</option><option>Marketing Agency</option><option>Legal</option><option>Financial Services</option><option>Construction</option><option>Other</option><option>Real estate</option><option>Technology</option><option>Consulting</option></select></div>
+          <div class="form-group"><div class="form-label">Website URL</div><input type="text" value="lansanconnect.com"></div>
+          <div class="form-group"><div class="form-label">From email</div><input type="email" value="hello@lansanconnect.com"></div>
+          <button class="btn btn-primary btn-sm">Save settings</button>
+        </div>
+        <div class="card">
+          <div class="card-title">AI model settings</div>
+          <div class="form-group"><div class="form-label">Model</div><select><option>Claude Sonnet 4.6 (recommended)</option><option>Claude Opus 4.6</option><option>Claude Haiku 4.5</option></select></div>
+          <div class="form-group"><div class="form-label">AI persona name</div><input type="text" value="Lansan AI"></div>
+          <div class="form-group"><div class="form-label">System instructions</div><textarea rows="3" style="resize:vertical">You are a helpful CRM assistant for Lansan Connect, helping businesses of all types manage contacts, deals, and growth.</textarea></div>
+          <button class="btn btn-primary btn-sm" style="margin-top:4px">Save AI settings</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+var contacts=[
+  {id:1,name:'Marcus Webb',company:'Apex Solutions',email:'marcus@apex.com',phone:'(919)555-0111',status:'Active'},
+  {id:2,name:'Priya Nair',company:'TechFlow Inc',email:'priya@techflow.com',phone:'(919)555-0142',status:'Lead'},
+  {id:3,name:'James Okafor',company:'Summit Group',email:'james@summitgroup.com',phone:'(919)555-0188',status:'Active'},
+];
+var deals=[
+  {id:1,name:'Apex services contract',company:'Apex Solutions',amount:18000,stage:'Proposal'},
+  {id:2,name:'TechFlow onboarding',company:'TechFlow Inc',amount:9500,stage:'Qualified'},
+  {id:3,name:'Summit expansion deal',company:'Summit Group',amount:42000,stage:'Negotiation'},
+  {id:4,name:'Greenway inbound',company:'Greenway LLC',amount:7200,stage:'Lead'},
+];
+var tasks=[
+  {id:1,text:'Follow up with Marcus Webb',due:'2026-06-08',priority:'High',done:false},
+  {id:2,text:'Send proposal to TechFlow',due:'2026-06-10',priority:'High',done:false},
+  {id:3,text:'Review Summit contract',due:'2026-06-12',priority:'Medium',done:false},
+  {id:4,text:'Update pipeline stages',due:'2026-06-15',priority:'Low',done:true},
+];
+var users=[
+  {id:1,name:'LaToya',email:'latoya@lansan.com',role:'Admin',status:'Active'},
+  {id:2,name:'Marcus Webb',email:'marcus@lansan.com',role:'Agent',status:'Active'},
+  {id:3,name:'Priya Nair',email:'priya@lansan.com',role:'Manager',status:'Active'},
+];
+var automations=[
+  {id:1,name:'New lead welcome',trigger:'Contact added with status Lead',action:'Send welcome email template',icon:'ti-user-plus',color:'#e8f8f2',iconColor:'#0F6E56',on:true},
+  {id:2,name:'Deal won notify',trigger:'Deal moved to Won',action:'Send internal Slack notification',icon:'ti-trophy',color:'#fef3c7',iconColor:'#92400e',on:true},
+  {id:3,name:'Inactive follow-up',trigger:'No activity for 7 days',action:'Create follow-up task',icon:'ti-clock',color:'#dbeafe',iconColor:'#1e40af',on:true},
+  {id:4,name:'Invoice reminder',trigger:'Invoice 3 days overdue',action:'Send payment reminder email',icon:'ti-receipt',color:'#fee2e2',iconColor:'#991b1b',on:false},
+];
+var templates=[
+  {id:1,name:'Welcome email',subject:'Welcome to Lansan Connect!',body:'Hi {{first_name}},\n\nThank you for connecting with Lansan Connect. We help businesses of all types manage contacts, close deals, and grow — from one powerful platform.\n\nWe\'d love to schedule a quick call to learn more about your needs.\n\nBest,\nLaToya\nLansan Connect'},
+  {id:2,name:'Follow-up email',subject:'Checking in — {{company}}',body:'Hi {{first_name}},\n\nI wanted to follow up on our recent conversation. Do you have 15 minutes this week to reconnect?\n\nLooking forward to hearing from you.\n\nBest,\nLaToya'},
+  {id:3,name:'Proposal sent',subject:'Your proposal from Lansan Connect',body:'Hi {{first_name}},\n\nPlease find attached your custom proposal for {{service}}. I\'m confident this solution will deliver measurable results for {{company}}.\n\nLet me know if you have any questions.\n\nWarm regards,\nLaToya'},
+  {id:4,name:'Invoice reminder',subject:'Invoice #{{invoice_id}} due soon',body:'Hi {{first_name}},\n\nThis is a friendly reminder that invoice #{{invoice_id}} for ${{amount}} is due on {{due_date}}.\n\nPlease use the payment link below to complete your payment.\n\nThank you,\nLansan Connect Finance Team'},
+];
+var campaigns=[
+  {id:1,name:'Q2 Spring Outreach',status:'Sent',sent:420,opens:162,clicks:48,date:'2026-05-28'},
+  {id:2,name:'AI Automation Launch',status:'Sent',sent:310,opens:134,clicks:61,date:'2026-06-01'},
+  {id:3,name:'Summer Service Promo',status:'Draft',sent:0,opens:0,clicks:0,date:'—'},
+];
+var invoices=[
+  {id:'INV-001',client:'Apex Solutions',desc:'Call center services — April',amount:8200,due:'2026-05-01',status:'Paid'},
+  {id:'INV-002',client:'TechFlow Inc',desc:'Platform onboarding — Q1',amount:4500,due:'2026-05-15',status:'Paid'},
+  {id:'INV-003',client:'Summit Group',desc:'Services — April',amount:11800,due:'2026-06-01',status:'Overdue'},
+  {id:'INV-004',client:'Apex Solutions',desc:'Call center services — May',amount:8200,due:'2026-06-15',status:'Pending'},
+];
+var payments=[
+  {id:'ch_001',client:'Apex Solutions',desc:'INV-001',amount:8200,date:'2026-05-02',status:'Succeeded'},
+  {id:'ch_002',client:'TechFlow Inc',desc:'INV-002',amount:4500,date:'2026-05-16',status:'Succeeded'},
+  {id:'ch_003',client:'Apex Solutions',desc:'INV-004 partial',amount:3800,date:'2026-06-03',status:'Succeeded'},
+];
+var wbBlocks=[];
+var modalAction=null;
+var chartsInit=false;
+
+function nav(id,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('pageTitle').textContent=el.textContent.trim().replace(/\d+/g,'').trim();
+  var labels={dashboard:'Add contact',contacts:'Add contact',pipeline:'Add deal',tasks:'Add task',automations:'New rule',templates:'New template',campaigns:'New campaign',payments:'Charge client',invoices:'Create invoice',reports:'Export report',website:'Publish site',ai:'New chat',users:'Add user',import:'Import file',integrations:'Connect app',settings:'Save all',leads:'Add lead',appointments:'New appointment'};
+  document.getElementById('topbarBtnLabel').textContent=labels[id]||'New';
+  if(id==='dashboard')refreshDash();
+  if(id==='contacts')renderContacts();
+  if(id==='pipeline')renderPipeline();
+  if(id==='tasks')renderTasks();
+  if(id==='automations')renderAutomations();
+  if(id==='templates')renderTemplates();
+  if(id==='campaigns')renderCampaigns();
+  if(id==='invoices')renderInvoices();
+  if(id==='payments')renderPayments();
+  if(id==='users')renderUsers();
+  if(id==='integrations')renderIntegrations();
+  if(id==='reports'&&!chartsInit){setTimeout(initReportCharts,120);}
+}
+function topbarAction(){
+  var lbl=document.getElementById('topbarBtnLabel').textContent;
+  if(lbl.includes('contact'))openAddContact();
+  else if(lbl.includes('deal'))openAddDeal();
+  else if(lbl.includes('task'))openAddTask();
+  else if(lbl.includes('rule'))openAddAutomation();
+  else if(lbl.includes('template'))openAddTemplate();
+  else if(lbl.includes('campaign'))openAddCampaign();
+  else if(lbl.includes('invoice'))openAddInvoice();
+  else if(lbl.includes('Charge'))openChargeModal();
+  else if(lbl.includes('user'))openAddUser();
+}
+function pill(s){var map={Active:'pill-green',Lead:'pill-blue',Inactive:'pill-gray',Paid:'pill-green',Overdue:'pill-red',Pending:'pill-amber',Sent:'pill-blue',Draft:'pill-gray',Won:'pill-green',Succeeded:'pill-green',Failed:'pill-red',High:'pill-red',Medium:'pill-amber',Low:'pill-gray','In progress':'pill-amber',Closed:'pill-gray',Admin:'pill-blue',Manager:'pill-green',Agent:'pill-gray'};return '<span class="pill '+(map[s]||'pill-gray')+'">'+s+'</span>';}
+function refreshDash(){
+  document.getElementById('s-contacts').textContent=contacts.length;
+  document.getElementById('s-value').textContent='$'+deals.reduce((a,d)=>a+d.amount,0).toLocaleString();
+  var dt=document.getElementById('dash-tasks');if(!dt)return;dt.innerHTML='';
+  tasks.filter(t=>!t.done).slice(0,5).forEach(t=>{var d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:9px;font-size:13px';d.innerHTML='<i class="ti ti-point-filled" style="color:#1D9E75;font-size:12px"></i><span style="flex:1;color:#222">'+t.text+'</span><span style="color:#aaa;font-size:11px">'+t.due+'</span>';dt.appendChild(d);});
+  setTimeout(function(){var el=document.getElementById('dash-chart');if(!el)return;if(el._c)el._c.destroy();el._c=new Chart(el.getContext('2d'),{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'Revenue',data:[4200,6800,5100,9400,8200,11200],borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.07)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#1D9E75'}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.05)'},ticks:{callback:v=>'$'+v.toLocaleString(),font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11}}}}}});},150);
+}
+function renderContacts(){
+  document.getElementById('contact-count').textContent=contacts.length;
+  var tb=document.getElementById('contact-tbody');tb.innerHTML='';
+  contacts.forEach(c=>{var tr=document.createElement('tr');tr.innerHTML='<td><strong>'+c.name+'</strong></td><td>'+c.company+'</td><td style="color:#666">'+c.email+'</td><td style="color:#666">'+c.phone+'</td><td>'+pill(c.status)+'</td><td><button class="btn btn-danger btn-sm" onclick="deleteContact('+c.id+')"><i class="ti ti-trash"></i></button></td>';tb.appendChild(tr);});
+}
+function deleteContact(id){contacts=contacts.filter(c=>c.id!==id);renderContacts();refreshDash();}
+var stages=['Lead','Qualified','Proposal','Negotiation'];
+function renderPipeline(){
+  var board=document.getElementById('pipeline-board');board.innerHTML='';
+  stages.forEach(s=>{var col=document.createElement('div');col.className='pipeline-col';var sd=deals.filter(d=>d.stage===s);col.innerHTML='<div class="col-header">'+s+'<span class="col-count">'+sd.length+'</span></div>';sd.forEach(d=>{var card=document.createElement('div');card.className='deal-card';card.innerHTML='<div class="deal-name">'+d.name+'</div><div class="deal-co">'+d.company+'</div><div style="display:flex;justify-content:space-between;align-items:center"><span class="deal-amount">$'+d.amount.toLocaleString()+'</span><button class="btn btn-danger btn-sm" onclick="deleteDeal('+d.id+')" style="padding:2px 5px"><i class="ti ti-x"></i></button></div>';col.appendChild(card);});board.appendChild(col);});
+}
+function deleteDeal(id){deals=deals.filter(d=>d.id!==id);renderPipeline();refreshDash();}
+function renderTasks(){
+  var tb=document.getElementById('task-tbody');tb.innerHTML='';
+  tasks.forEach(t=>{var tr=document.createElement('tr');tr.innerHTML='<td style="'+(t.done?'text-decoration:line-through;color:#aaa':'font-weight:600')+'">'+t.text+'</td><td style="color:#666">'+t.due+'</td><td>'+pill(t.priority)+'</td><td>'+pill(t.done?'Closed':'In progress')+'</td><td><button class="btn btn-sm" onclick="toggleTask('+t.id+')" title="'+(t.done?'Reopen':'Complete')+'"><i class="ti ti-'+(t.done?'rotate-clockwise':'check')+'"></i></button></td>';tb.appendChild(tr);});
+  document.getElementById('task-badge').textContent=tasks.filter(t=>!t.done).length;
+}
+function toggleTask(id){var t=tasks.find(t=>t.id===id);if(t)t.done=!t.done;renderTasks();}
+function renderAutomations(){
+  var el=document.getElementById('auto-list');el.innerHTML='';
+  automations.forEach(a=>{var d=document.createElement('div');d.className='auto-rule';d.innerHTML='<div class="auto-icon" style="background:'+a.color+'"><i class="ti '+a.icon+'" style="color:'+a.iconColor+'"></i></div><div class="auto-info"><div class="auto-name">'+a.name+'</div><div class="auto-desc">When: '+a.trigger+'<br>Then: '+a.action+'</div></div><button class="toggle '+(a.on?'on':'')+'" onclick="toggleAuto('+a.id+')" title="'+(a.on?'Disable':'Enable')+'"></button><button class="btn btn-danger btn-sm" onclick="deleteAuto('+a.id+')"><i class="ti ti-trash"></i></button>';el.appendChild(d);});
+}
+function toggleAuto(id){var a=automations.find(x=>x.id===id);if(a)a.on=!a.on;renderAutomations();}
+function deleteAuto(id){automations=automations.filter(a=>a.id!==id);renderAutomations();}
+function renderTemplates(){
+  var el=document.getElementById('tpl-list');el.innerHTML='';
+  templates.forEach(t=>{var d=document.createElement('div');d.className='tpl-card';d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="tpl-card-title">'+t.name+'</div><div class="tpl-card-prev">'+t.subject+'</div></div><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteTpl('+t.id+')"><i class="ti ti-trash"></i></button></div>';d.onclick=function(){previewTpl(t.id);};el.appendChild(d);});
+}
+function previewTpl(id){var t=templates.find(x=>x.id===id);if(!t)return;document.getElementById('tpl-preview').innerHTML='<div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;margin-bottom:4px">Subject</div><div style="font-size:13px;font-weight:600;margin-bottom:12px;color:#111">'+t.subject+'</div><div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;margin-bottom:4px">Body</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap;color:#333">'+t.body+'</div>';}
+function deleteTpl(id){templates=templates.filter(t=>t.id!==id);renderTemplates();document.getElementById('tpl-preview').textContent='Select a template to preview.';}
+function renderCampaigns(){
+  var el=document.getElementById('campaign-list');el.innerHTML='';
+  campaigns.forEach(c=>{var d=document.createElement('div');d.className='campaign-card';var rate=c.sent>0?Math.round(c.opens/c.sent*100):0;var ctr=c.opens>0?Math.round(c.clicks/c.opens*100):0;d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:14px;font-weight:700;color:#111">'+c.name+'</div><div style="font-size:11px;color:#888;margin-top:2px">'+c.date+'</div></div><div style="display:flex;gap:8px;align-items:center">'+pill(c.status)+(c.status==='Draft'?'<button class="btn btn-sm btn-primary" onclick="sendCampaign('+c.id+')"><i class="ti ti-send"></i> Send now</button>':'')+'<button class="btn btn-danger btn-sm" onclick="deleteCampaign('+c.id+')"><i class="ti ti-trash"></i></button></div></div><div class="campaign-stats"><div class="c-stat"><div class="c-stat-val">'+c.sent.toLocaleString()+'</div><div class="c-stat-label">Sent</div></div><div class="c-stat"><div class="c-stat-val">'+c.opens.toLocaleString()+'</div><div class="c-stat-label">Opens</div></div><div class="c-stat"><div class="c-stat-val">'+rate+'%</div><div class="c-stat-label">Open rate</div></div><div class="c-stat"><div class="c-stat-val">'+ctr+'%</div><div class="c-stat-label">CTR</div></div></div>';el.appendChild(d);});
+}
+function sendCampaign(id){var c=campaigns.find(x=>x.id===id);if(c){c.status='Sent';c.sent=contacts.length*10+Math.floor(Math.random()*200);c.opens=Math.floor(c.sent*0.38);c.clicks=Math.floor(c.opens*0.18);c.date=new Date().toISOString().split('T')[0];renderCampaigns();}}
+function deleteCampaign(id){campaigns=campaigns.filter(c=>c.id!==id);renderCampaigns();}
+function renderInvoices(){
+  document.getElementById('inv-count').textContent=invoices.length;
+  var tb=document.getElementById('invoice-tbody');tb.innerHTML='';
+  invoices.forEach(inv=>{var tr=document.createElement('tr');tr.innerHTML='<td style="color:#1e40af;font-weight:700">'+inv.id+'</td><td><strong>'+inv.client+'</strong></td><td style="color:#666">'+inv.desc+'</td><td style="font-weight:700;color:#0F6E56">$'+inv.amount.toLocaleString()+'</td><td style="color:#666">'+inv.due+'</td><td>'+pill(inv.status)+'</td>';tb.appendChild(tr);});
+}
+function renderPayments(){
+  var tb=document.getElementById('payment-tbody');tb.innerHTML='';
+  payments.forEach(p=>{var tr=document.createElement('tr');tr.innerHTML='<td style="color:#1e40af;font-size:12px">'+p.id+'</td><td><strong>'+p.client+'</strong></td><td style="color:#666">'+p.desc+'</td><td style="font-weight:700;color:#0F6E56">$'+p.amount.toLocaleString()+'</td><td style="color:#666">'+p.date+'</td><td>'+pill(p.status)+'</td>';tb.appendChild(tr);});
+}
+function renderUsers(){
+  document.getElementById('user-count').textContent=users.length;
+  var tb=document.getElementById('user-tbody');tb.innerHTML='';
+  users.forEach(u=>{var tr=document.createElement('tr');tr.innerHTML='<td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:#e8f8f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0F6E56">'+u.name.slice(0,2).toUpperCase()+'</div><strong>'+u.name+'</strong></div></td><td style="color:#666">'+u.email+'</td><td>'+pill(u.role)+'</td><td>'+pill(u.status)+'</td><td><button class="btn btn-danger btn-sm" onclick="deleteUser('+u.id+')"><i class="ti ti-trash"></i></button></td>';tb.appendChild(tr);});
+}
+function deleteUser(id){if(users.length<=1)return;users=users.filter(u=>u.id!==id);renderUsers();}
+
+function initReportCharts(){
+  chartsInit=true;
+  var base={plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10}}},x:{grid:{display:false},ticks:{font:{size:10}}}}};
+  var pEl=document.getElementById('report-pipeline');
+  if(pEl){if(pEl._c)pEl._c.destroy();pEl._c=new Chart(pEl.getContext('2d'),{type:'bar',data:{labels:stages,datasets:[{data:[7200,9500,18000,42000],backgroundColor:['#e8f8f2','#dbeafe','#fef3c7','#ede9fe'],borderColor:['#1D9E75','#3b82f6','#d97706','#7c3aed'],borderWidth:1.5,borderRadius:5}]},options:base});}
+  var rEl=document.getElementById('report-revenue');
+  if(rEl){if(rEl._c)rEl._c.destroy();rEl._c=new Chart(rEl.getContext('2d'),{type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{data:[4200,6800,5100,9400,8200,11200],backgroundColor:'#e8f8f2',borderColor:'#1D9E75',borderWidth:1.5,borderRadius:5}]},options:base});}
+  var cEl=document.getElementById('report-campaigns');
+  if(cEl){if(cEl._c)cEl._c.destroy();cEl._c=new Chart(cEl.getContext('2d'),{type:'bar',data:{labels:['Q2 Spring Outreach','AI Launch','Summer Promo'],datasets:[{label:'Opens',data:[162,134,0],backgroundColor:'#dbeafe',borderColor:'#3b82f6',borderWidth:1.5,borderRadius:4},{label:'Clicks',data:[48,61,0],backgroundColor:'#ede9fe',borderColor:'#7c3aed',borderWidth:1.5,borderRadius:4}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10}}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});}
+  var ctEl=document.getElementById('report-contacts');
+  if(ctEl){if(ctEl._c)ctEl._c.destroy();ctEl._c=new Chart(ctEl.getContext('2d'),{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{data:[12,18,24,29,35,contacts.length+35],borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.06)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#7c3aed'}]},options:base});}
+}
+
+function openModal(title,body,action,saveLbl){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modalSaveBtn').textContent=saveLbl||'Save';
+  modalAction=action;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');modalAction=null;}
+function saveModal(){if(modalAction)modalAction();}
+function fv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+
+function openAddContact(){
+  openModal('Add contact','<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Full name</div><input id="m-name" type="text" placeholder="Jane Smith"></div><div class="form-group"><div class="form-label">Company</div><input id="m-co" type="text"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Email</div><input id="m-email" type="email"></div><div class="form-group"><div class="form-label">Phone</div><input id="m-phone" type="text"></div></div><div class="form-group"><div class="form-label">Status</div><select id="m-status"><option>Lead</option><option>Active</option><option>Inactive</option></select></div>',function(){
+    var n=fv('m-name');if(!n)return;
+    contacts.push({id:contacts.reduce((m,c)=>Math.max(m,c.id),0)+1,name:n,company:fv('m-co')||'—',email:fv('m-email')||'—',phone:fv('m-phone')||'—',status:fv('m-status')});
+    renderContacts();refreshDash();closeModal();
+  });
+}
+function openAddDeal(){
+  openModal('Add deal','<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Deal name</div><input id="m-dname" type="text"></div><div class="form-group"><div class="form-label">Company</div><input id="m-dco" type="text"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Amount ($)</div><input id="m-damt" type="number" placeholder="5000"></div><div class="form-group"><div class="form-label">Stage</div><select id="m-dstage"><option>Lead</option><option>Qualified</option><option>Proposal</option><option>Negotiation</option></select></div></div>',function(){
+    var n=fv('m-dname');if(!n)return;
+    deals.push({id:deals.reduce((m,d)=>Math.max(m,d.id),0)+1,name:n,company:fv('m-dco')||'—',amount:parseInt(fv('m-damt'))||0,stage:fv('m-dstage')});
+    renderPipeline();refreshDash();closeModal();
+  });
+}
+function openAddTask(){
+  openModal('Add task','<div class="form-group"><div class="form-label">Task</div><input id="m-ttask" type="text" placeholder="Follow up with..."></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Due date</div><input id="m-tdue" type="date"></div><div class="form-group"><div class="form-label">Priority</div><select id="m-tpri"><option>High</option><option>Medium</option><option>Low</option></select></div></div>',function(){
+    var t=fv('m-ttask');if(!t)return;
+    tasks.push({id:tasks.reduce((m,x)=>Math.max(m,x.id),0)+1,text:t,due:fv('m-tdue')||'TBD',priority:fv('m-tpri'),done:false});
+    renderTasks();closeModal();
+  });
+}
+function openAddAutomation(){
+  openModal('New automation rule','<div class="form-group"><div class="form-label">Rule name</div><input id="m-aname" type="text" placeholder="e.g. New lead welcome"></div><div class="form-group"><div class="form-label">Trigger (when this happens...)</div><select id="m-atrig"><option>Contact added with status Lead</option><option>Deal moved to Proposal</option><option>Deal moved to Won</option><option>No activity for 7 days</option><option>Invoice overdue 3 days</option><option>Task created</option></select></div><div class="form-group"><div class="form-label">Action (do this...)</div><select id="m-aact"><option>Send welcome email template</option><option>Send follow-up email template</option><option>Create follow-up task</option><option>Send internal notification</option><option>Send payment reminder email</option></select></div>',function(){
+    var n=fv('m-aname');if(!n)return;
+    automations.push({id:automations.reduce((m,a)=>Math.max(m,a.id),0)+1,name:n,trigger:fv('m-atrig'),action:fv('m-aact'),icon:'ti-bolt',color:'#fef3c7',iconColor:'#92400e',on:true});
+    renderAutomations();closeModal();
+  });
+}
+function openAddTemplate(){
+  openModal('New email template','<div class="form-group"><div class="form-label">Template name</div><input id="m-tname" type="text" placeholder="Re-engagement email"></div><div class="form-group"><div class="form-label">Subject line</div><input id="m-tsubj" type="text" placeholder="Use {{first_name}}, {{company}} variables"></div><div class="form-group"><div class="form-label">Body</div><textarea id="m-tbody" rows="6" style="resize:vertical" placeholder="Hi {{first_name}},&#10;&#10;Your message here..."></textarea></div>',function(){
+    var n=fv('m-tname');if(!n)return;
+    templates.push({id:templates.reduce((m,t)=>Math.max(m,t.id),0)+1,name:n,subject:fv('m-tsubj'),body:fv('m-tbody')});
+    renderTemplates();closeModal();
+  });
+}
+function openAddCampaign(){
+  openModal('New campaign','<div class="form-group"><div class="form-label">Campaign name</div><input id="m-cname" type="text" placeholder="Summer Promo"></div><div class="form-group"><div class="form-label">Email template</div><select id="m-ctpl">'+templates.map(t=>'<option>'+t.name+'</option>').join('')+'</select></div><div class="form-group"><div class="form-label">Audience</div><select id="m-caud"><option>All contacts</option><option>Leads only</option><option>Active clients</option><option>Custom segment</option></select></div><div class="form-group"><div class="form-label">Schedule</div><input id="m-cdate" type="datetime-local"></div>',function(){
+    var n=fv('m-cname');if(!n)return;
+    campaigns.push({id:campaigns.reduce((m,c)=>Math.max(m,c.id),0)+1,name:n,status:'Draft',sent:0,opens:0,clicks:0,date:fv('m-cdate').split('T')[0]||'Scheduled'});
+    renderCampaigns();closeModal();
+  },'Create campaign');
+}
+function openAddInvoice(){
+  openModal('Create invoice','<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Client name</div><input id="m-iclient" type="text" placeholder="Acme Corp"></div><div class="form-group"><div class="form-label">Amount ($)</div><input id="m-iamt" type="number" placeholder="5000"></div></div><div class="form-group"><div class="form-label">Description</div><input id="m-idesc" type="text" placeholder="Services rendered — June 2026"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Due date</div><input id="m-idue" type="date"></div><div class="form-group"><div class="form-label">Payment method</div><select id="m-ipay"><option>Stripe (online payment link)</option><option>Bank transfer</option><option>Check</option></select></div></div><div style="margin-top:8px;padding:10px 12px;background:#eff6ff;border-radius:8px;font-size:12px;color:#1e40af;display:flex;gap:8px;align-items:center"><i class="ti ti-brand-stripe" style="font-size:16px"></i>A Stripe payment link will be auto-generated and included in the invoice email.</div>',function(){
+    var client=fv('m-iclient');if(!client)return;
+    var num=invoices.length+5;
+    invoices.push({id:'INV-'+String(num).padStart(3,'0'),client,desc:fv('m-idesc')||'Services',amount:parseInt(fv('m-iamt'))||0,due:fv('m-idue')||'TBD',status:'Pending'});
+    renderInvoices();closeModal();
+  },'Create & send invoice');
+}
+function openChargeModal(){
+  openModal('Charge client via Stripe','<div class="form-group"><div class="form-label">Client name or email</div><input id="m-chclient" type="text"></div><div class="form-group"><div class="form-label">Amount ($)</div><input id="m-chamt" type="number" placeholder="1000"></div><div class="form-group"><div class="form-label">Description</div><input id="m-chdesc" type="text" placeholder="Invoice #, service description..."></div><div style="margin-top:8px;padding:10px 12px;background:#eff6ff;border-radius:8px;font-size:12px;color:#1e40af;display:flex;gap:8px;align-items:center"><i class="ti ti-lock" style="font-size:16px"></i>Payments processed securely by Stripe. Funds deposit in 2 business days.</div>',function(){
+    var client=fv('m-chclient');if(!client)return;
+    payments.push({id:'ch_'+String(payments.length+4).padStart(3,'0'),client,desc:fv('m-chdesc')||'—',amount:parseInt(fv('m-chamt'))||0,date:new Date().toISOString().split('T')[0],status:'Succeeded'});
+    renderPayments();closeModal();
+  },'Charge now');
+}
+function openAddUser(){
+  openModal('Add team member','<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><div class="form-label">Full name</div><input id="m-uname" type="text"></div><div class="form-group"><div class="form-label">Email</div><input id="m-uemail" type="email"></div></div><div class="form-group" style="margin-top:4px"><div class="form-label">Role</div><select id="m-urole"><option>Agent</option><option>Manager</option><option>Admin</option></select></div><div style="margin-top:10px;padding:10px 12px;background:#f0fdf9;border-radius:8px;font-size:12px;color:#059669;display:flex;gap:8px;align-items:center"><i class="ti ti-infinity" style="font-size:16px"></i>Unlimited seats — no extra cost per user, ever.</div>',function(){
+    var n=fv('m-uname');if(!n)return;
+    users.push({id:users.reduce((m,u)=>Math.max(m,u.id),0)+1,name:n,email:fv('m-uemail')||'—',role:fv('m-urole'),status:'Active'});
+    renderUsers();closeModal();
+  });
+}
+
+var blockDefs={
+  hero:{label:'Hero section',render:function(){return '<h1 style="font-size:26px;font-weight:800;margin-bottom:10px;color:#111">Welcome to Lansan Connect</h1><p style="font-size:14px;color:#555;margin-bottom:14px;line-height:1.6">Powerful business tools built around your growth.</p><div style="display:inline-block;background:#1D9E75;color:#fff;padding:10px 22px;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer">Get started</div>';}},
+  text:{label:'Text block',render:function(){return '<p style="font-size:14px;color:#444;line-height:1.7">Add your content here. Customize this section with your unique messaging and value proposition.</p>';}},
+  cta:{label:'Call to action',render:function(){return '<div style="text-align:center;padding:12px 0"><h2 style="font-size:18px;font-weight:800;margin-bottom:10px;color:#111">Ready to grow your business?</h2><div style="display:inline-block;background:#1D9E75;color:#fff;padding:10px 22px;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer">Contact us today</div></div>';}},
+  services:{label:'Services list',render:function(){return '<h2 style="font-size:17px;font-weight:800;margin-bottom:10px;color:#111">Our services</h2><ul style="padding-left:20px;font-size:14px;color:#444;line-height:2.4"><li>Sales & account management</li><li>Client onboarding</li><li>AI-powered automation</li><li>Customer support outsourcing</li><li>Lead generation services</li></ul>';}},
+  contact:{label:'Contact form',render:function(){return '<h2 style="font-size:17px;font-weight:800;margin-bottom:10px;color:#111">Get in touch</h2><div style="display:grid;gap:8px"><input type="text" placeholder="Your name" style="padding:9px;border:1px solid #ddd;border-radius:6px;font-size:13px"><input type="email" placeholder="Email address" style="padding:9px;border:1px solid #ddd;border-radius:6px;font-size:13px"><textarea placeholder="Tell us about your needs..." rows="3" style="padding:9px;border:1px solid #ddd;border-radius:6px;font-size:13px;resize:none"></textarea><div style="background:#1D9E75;color:#fff;padding:10px;border-radius:6px;font-size:14px;font-weight:700;text-align:center;cursor:pointer">Send message</div></div>';}}
+};
+function addBlock(type){wbBlocks.push({id:Date.now(),type});renderWB();}
+function removeBlock(id){wbBlocks=wbBlocks.filter(b=>b.id!==id);renderWB();}
+function renderWB(){
+  var bc=document.getElementById('wb-blocks');bc.innerHTML='';
+  if(!wbBlocks.length){bc.innerHTML='<p style="font-size:13px;color:#aaa;text-align:center;padding:18px 0">Click a block type above to start building.</p>';updatePreview();return;}
+  wbBlocks.forEach(b=>{var def=blockDefs[b.type];var div=document.createElement('div');div.style.cssText='background:#f7f8fa;border:1px solid #e8e8e8;border-radius:8px;padding:9px 12px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;font-size:13px';div.innerHTML='<div><span style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase;display:block;margin-bottom:1px">'+def.label+'</span><span style="font-weight:600;color:#111">'+b.type.charAt(0).toUpperCase()+b.type.slice(1)+' block</span></div><button class="btn btn-danger btn-sm" onclick="removeBlock('+b.id+')"><i class="ti ti-x"></i></button>';bc.appendChild(div);});
+  updatePreview();
+}
+function updatePreview(){
+  var pv=document.getElementById('wb-preview');
+  if(!wbBlocks.length){pv.innerHTML='<p style="color:#aaa;font-size:13px">Add blocks to preview your site.</p>';return;}
+  pv.innerHTML=wbBlocks.map(b=>blockDefs[b.type].render()).join('<hr style="border:none;border-top:1px solid #eee;margin:14px 0">');
+}
+function publishSite(){if(!wbBlocks.length){alert('Add at least one block first.');return;}alert('🎉 Site published! Your Lansan Connect website is now live at lansanconnect.com');}
+
+var aiHistory=[];
+function aiChip(q){document.getElementById('ai-input').value=q;sendAI();}
+function sendAI(){
+  var input=document.getElementById('ai-input');var q=input.value.trim();if(!q)return;input.value='';
+  appendMsg('user',q);aiHistory.push({role:'user',content:q});
+  setTimeout(doAICall,80);
+}
+function appendMsg(who,text){
+  var msgs=document.getElementById('ai-msgs');var d=document.createElement('div');d.className='ai-msg';
+  d.innerHTML='<div class="ai-avatar '+who+'">'+(who==='user'?'LA':'AI')+'</div><div class="ai-bubble '+who+'">'+text.replace(/\n/g,'<br>')+'</div>';
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function doAICall(){
+  var sys='You are Lansan AI, the built-in assistant for Lansan CRM — serving businesses of all types. Current data: '+contacts.length+' contacts, '+deals.length+' deals totaling $'+deals.reduce(function(a,d){return a+d.amount;},0).toLocaleString()+', '+tasks.filter(function(t){return!t.done;}).length+' open tasks, '+automations.filter(function(a){return a.on;}).length+' active automations, '+campaigns.length+' campaigns, '+invoices.length+' invoices. Be concise and practical. When writing emails or copy, produce ready-to-use content with no placeholders left unfilled.';
+  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:aiHistory})})
+  .then(function(r){return r.json();})
+  .then(function(data){var reply=(data.content&&data.content[0]&&data.content[0].text)||'I\'m here to help!';appendMsg('bot',reply);aiHistory.push({role:'assistant',content:reply});})
+  .catch(function(){appendMsg('bot','I\'m ready to help — ask me about drafting emails, campaign ideas, pipeline summaries, automation strategies, or invoice follow-ups.');});
+}
+
+// ── IMPORT ───────────────────────────────────────────────
+var importData=[];var importHeaders=[];var importStep=1;
+function goImportStep(n){
+  document.querySelectorAll('.import-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('import-step-'+n).classList.add('active');
+  importStep=n;
+  if(n===4){animateBar();}
+}
+function animateBar(){
+  var bar=document.getElementById('import-bar');
+  var w=0;var iv=setInterval(function(){w=Math.min(w+4,100);bar.style.width=w+'%';if(w===100)clearInterval(iv);},30);
+}
+function resetImport(){importData=[];importHeaders=[];document.getElementById('import-file').value='';}
+function dragOver(e){e.preventDefault();document.getElementById('import-drop').classList.add('drag-over');}
+function dragLeave(){document.getElementById('import-drop').classList.remove('drag-over');}
+function dropFile(e){
+  e.preventDefault();dragLeave();
+  var f=e.dataTransfer.files[0];if(f)processFile(f);
+}
+function handleFileSelect(e){var f=e.target.files[0];if(f)processFile(f);}
+function processFile(f){
+  document.getElementById('import-filename').textContent=f.name;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var text=ev.target.result;
+    var lines=text.split('\n').filter(l=>l.trim());
+    importHeaders=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+    importData=lines.slice(1).map(l=>l.split(',').map(c=>c.trim().replace(/"/g,'')));
+    document.getElementById('import-row-count').textContent=importData.length.toLocaleString();
+    buildMapRows();
+    goImportStep(2);
+  };
+  reader.readAsText(f);
+}
+var lansanFields=['name','company','email','phone','status','source','notes','— skip —'];
+function buildMapRows(){
+  var el=document.getElementById('import-map-rows');el.innerHTML='';
+  importHeaders.forEach(function(h,i){
+    var guess=lansanFields.find(f=>f.toLowerCase().includes(h.toLowerCase().substring(0,4)))||lansanFields[lansanFields.length-1];
+    var opts=lansanFields.map(f=>'<option value="'+f+'"'+(f===guess?' selected':'')+'>'+f+'</option>').join('');
+    el.innerHTML+='<div class="import-map-row"><span>'+h+'</span><i class="ti ti-arrow-right" style="color:#aaa;font-size:14px"></i><select id="map-'+i+'">'+opts+'</select></div>';
+  });
+}
+function goImportStep3(){
+  var head=document.getElementById('preview-head');
+  var body=document.getElementById('preview-body');
+  head.innerHTML='';body.innerHTML='';
+  importHeaders.forEach(h=>{var th=document.createElement('th');th.textContent=h;head.appendChild(th);});
+  document.getElementById('preview-total').textContent=importData.length.toLocaleString();
+  importData.slice(0,5).forEach(row=>{
+    var tr=document.createElement('tr');
+    row.forEach(cell=>{var td=document.createElement('td');td.textContent=cell;tr.appendChild(td);});
+    body.appendChild(tr);
+  });
+}
+function runImport(){
+  var mapping={};
+  importHeaders.forEach(function(h,i){
+    var sel=document.getElementById('map-'+i);
+    if(sel&&sel.value!=='— skip —')mapping[sel.value]=i;
+  });
+  var added=0;
+  importData.forEach(function(row){
+    var name=row[mapping['name']]||row[0]||'Unknown';
+    if(!name||name==='Unknown'&&!row[0])return;
+    var id=contacts.reduce((m,c)=>Math.max(m,c.id),0)+1;
+    contacts.push({
+      id,
+      name:row[mapping['name']]||row[0]||'—',
+      company:row[mapping['company']]||'—',
+      email:row[mapping['email']]||'—',
+      phone:row[mapping['phone']]||'—',
+      status:row[mapping['status']]||'Lead'
+    });
+    added++;
+  });
+  document.getElementById('import-done-count').textContent=added.toLocaleString();
+  refreshDash();renderContacts();
+  goImportStep(4);
+  var now=new Date().toISOString().split('T')[0];
+  var tb=document.getElementById('import-history-tbody');
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td>manual_import.csv</td><td>'+added.toLocaleString()+'</td><td>Contacts</td><td>'+now+'</td><td><span class="pill pill-green">Success</span></td>';
+  tb.insertBefore(tr,tb.firstChild);
+}
+function downloadTemplate(){
+  var csv='name,company,email,phone,status,source,notes\nJane Smith,Acme Corp,jane@acme.com,(555)000-0001,Lead,Website,Interested in Pro plan\nJohn Doe,Beta LLC,john@beta.com,(555)000-0002,Active,Referral,';
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lansan_import_template.csv';a.click();
+}
+// Override step 3 trigger to also build preview
+var _origGoImportStep=goImportStep;
+goImportStep=function(n){_origGoImportStep(n);if(n===3)goImportStep3();};
+
+// ── INTEGRATIONS ──────────────────────────────────────────
+var integrations=[
+  {name:'Stripe',desc:'Accept payments, send invoices, and manage subscriptions directly in Lansan.',icon:'ti-brand-stripe',bg:'#e0f2fe',ic:'#0369a1',connected:true},
+  {name:'Gmail',desc:'Sync emails, log conversations to contacts, and send campaigns from your Gmail account.',icon:'ti-brand-gmail',bg:'#fee2e2',ic:'#dc2626',connected:false},
+  {name:'Google Calendar',desc:'Sync appointments and tasks with Google Calendar. Two-way real-time sync.',icon:'ti-brand-google',bg:'#fef3c7',ic:'#d97706',connected:false},
+  {name:'Slack',desc:'Get deal alerts, task reminders, and automation notifications in your Slack channels.',icon:'ti-brand-slack',bg:'#ede9fe',ic:'#7c3aed',connected:true},
+  {name:'Zapier',desc:'Connect Lansan to 6,000+ apps. Trigger workflows from any event in the CRM.',icon:'ti-bolt',bg:'#fff7ed',ic:'#ea580c',connected:false,url:'https://zapier.com/developer/public-invite/242513/339575cbc8defa190ce1c1b20f72bdd5/'},
+  {name:'Typeform',desc:'Automatically create leads in Lansan when someone completes your Typeform.',icon:'ti-forms',bg:'#f0fdf9',ic:'#0F6E56',connected:false},
+  {name:'Calendly',desc:'Sync Calendly bookings as appointments and auto-create contacts for new bookings.',icon:'ti-calendar-event',bg:'#f0fdf9',ic:'#0891b2',connected:false},
+  {name:'HubSpot',desc:'Two-way sync contacts, deals, and notes between HubSpot and Lansan.',icon:'ti-circle-letter-h',bg:'#fff7ed',ic:'#c2410c',connected:false},
+  {name:'Apollo.io',desc:'Push enriched lead data from Apollo directly into Lansan contacts and pipeline.',icon:'ti-rocket',bg:'#f5f3ff',ic:'#6d28d9',connected:false},
+  {name:'LinkedIn',desc:'Import lead profiles and company data from LinkedIn Sales Navigator.',icon:'ti-brand-linkedin',bg:'#dbeafe',ic:'#1e40af',connected:false},
+  {name:'Make (Integromat)',desc:'Build advanced multi-step automations between Lansan and hundreds of apps.',icon:'ti-topology-star',bg:'#fdf4ff',ic:'#a21caf',connected:false},
+  {name:'QuickBooks',desc:'Sync invoices and payments between Lansan and QuickBooks automatically.',icon:'ti-calculator',bg:'#f0fdf9',ic:'#15803d',connected:false},
+];
+function renderIntegrations(){
+  var grid=document.getElementById('int-grid');if(!grid)return;grid.innerHTML='';
+  integrations.forEach(function(int){
+    var d=document.createElement('div');d.className='int-card';
+    var connectAction=int.url
+      ? "window.open('"+int.url+"','_blank')"
+      : "toggleInt('"+int.name+"',this)";
+    d.innerHTML='<div style="display:flex;align-items:center;gap:10px"><div class="int-logo" style="background:'+int.bg+'"><i class="ti '+int.icon+'" style="color:'+int.ic+'"></i></div><div><div class="int-name">'+int.name+'</div></div></div><div class="int-desc">'+int.desc+'</div><div class="int-status"><span>'+(int.connected?'<span class="int-connected"><i class="ti ti-circle-check" style="font-size:13px"></i> Connected</span>':'<span style="font-size:11px;color:#aaa">Not connected</span>')+'</span><button class="int-connect-btn'+(int.connected?' connected':'')+'" onclick="'+connectAction+'">'+(int.connected?'Connected':'Connect')+'</button></div>';
+    grid.appendChild(d);
+  });
+}
+function toggleInt(name,btn){
+  var int=integrations.find(i=>i.name===name);if(!int)return;
+  if(int.connected){if(!confirm('Disconnect '+name+'?'))return;int.connected=false;}
+  else{int.connected=true;}
+  renderIntegrations();
+}
+
+refreshDash();
+renderContacts();
+renderPipeline();
+renderTasks();
+renderAutomations();
+renderTemplates();
+renderCampaigns();
+renderInvoices();
+renderPayments();
+renderUsers();
+renderWB();
+renderIntegrations();
+</script>
+</body>
+</html>

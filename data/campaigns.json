@@ -1,0 +1,5 @@
+[
+  { "id": 1, "name": "Q2 Spring Outreach", "status": "Sent", "sent": 420, "opens": 162, "clicks": 48, "date": "2026-05-28" },
+  { "id": 2, "name": "AI Automation Launch", "status": "Sent", "sent": 310, "opens": 134, "clicks": 61, "date": "2026-06-01" },
+  { "id": 3, "name": "Summer Service Promo", "status": "Draft", "sent": 0, "opens": 0, "clicks": 0, "date": "—" }
+]

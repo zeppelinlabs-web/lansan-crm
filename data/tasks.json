@@ -1,0 +1,6 @@
+[
+  { "id": 1, "text": "Follow up with Daria about contract renewal", "due": "2026-06-10", "priority": "High", "done": false },
+  { "id": 2, "text": "Send onboarding deck to TechFlow", "due": "2026-06-12", "priority": "Medium", "done": false },
+  { "id": 3, "text": "Prepare Q3 revenue report", "due": "2026-06-15", "priority": "Low", "done": false },
+  { "id": 4, "text": "Review campaign stats for Spring Outreach", "due": "2026-06-05", "priority": "High", "done": true }
+]

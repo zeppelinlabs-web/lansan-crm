@@ -1,0 +1,5 @@
+[
+  { "id": "ch_001", "client": "Apex Solutions", "desc": "INV-001", "amount": 8200, "date": "2026-05-02", "status": "Succeeded" },
+  { "id": "ch_002", "client": "TechFlow Inc", "desc": "INV-002", "amount": 4500, "date": "2026-05-16", "status": "Succeeded" },
+  { "id": "ch_003", "client": "Apex Solutions", "desc": "INV-004 partial", "amount": 3800, "date": "2026-06-03", "status": "Succeeded" }
+]

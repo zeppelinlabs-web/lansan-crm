@@ -1,0 +1,7 @@
+[
+  { "id": 1, "name": "Sarah Connor", "company": "Cyberdyne Systems", "email": "sarah@cyberdyne.com", "source": "Website", "score": "Hot", "value": 35000, "added": "2026-06-01" },
+  { "id": 2, "name": "David Miller", "company": "Nexus Logistics", "email": "david@nexuslog.com", "source": "LinkedIn", "score": "Hot", "value": 18000, "added": "2026-06-02" },
+  { "id": 3, "name": "Amanda Chen", "company": "Vanguard Retail", "email": "amanda@vanguard.com", "source": "Referral", "score": "Warm", "value": 12500, "added": "2026-06-03" },
+  { "id": 4, "name": "Carlos Mendez", "company": "Solaris Health", "email": "carlos@solaris.org", "source": "Cold outreach", "score": "Warm", "value": 9200, "added": "2026-06-04" },
+  { "id": 5, "name": "Rachel Green", "company": "Bloom Retail", "email": "rachel@bloom.com", "source": "Ad campaign", "score": "Cold", "value": 5000, "added": "2026-06-05" }
+]

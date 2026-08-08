@@ -1,0 +1,6 @@
+[
+  { "id": 1, "time": "09:00 AM", "name": "Daria Rowe — Summit Contract Review", "type": "Video call", "status": "Confirmed", "date": "Today" },
+  { "id": 2, "time": "11:30 AM", "name": "Marcus Vance — Platform Demo", "type": "Product Demo", "status": "Pending", "date": "Today" },
+  { "id": 3, "time": "02:00 PM", "name": "Elena Rostova — Onboarding Check-in", "type": "Discovery", "status": "Confirmed", "date": "Today" },
+  { "id": 4, "time": "04:15 PM", "name": "Sarah Connor — Discovery Call", "type": "Sales Call", "status": "Cancelled", "date": "Today" }
+]
