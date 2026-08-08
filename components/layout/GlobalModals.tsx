@@ -6,6 +6,7 @@ import { Modal } from '@/components/ui/Modal';
 
 export const GlobalModals: React.FC = () => {
   const {
+    contacts,
     activeModal,
     closeModal,
     addContact,
@@ -167,7 +168,18 @@ export const GlobalModals: React.FC = () => {
           </div>
           <div className="form-group">
             <div className="form-label">Company</div>
-            <input type="text" placeholder="Beta LLC" value={dCompany} onChange={(e) => setDCompany(e.target.value)} />
+            <input
+              type="text"
+              placeholder="e.g. Apex Solutions"
+              list="company-list-options"
+              value={dCompany}
+              onChange={(e) => setDCompany(e.target.value)}
+            />
+            <datalist id="company-list-options">
+              {Array.from(new Set(contacts.map((c) => c.company))).map((co) => (
+                <option key={co} value={co} />
+              ))}
+            </datalist>
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>

@@ -4,14 +4,6 @@ import React from 'react';
 import { useCRM } from '@/components/providers/CRMProvider';
 import { StatCard } from '@/components/ui/StatCard';
 import { Card } from '@/components/ui/Card';
-import {
-  IconBolt,
-  IconSpeakerphone,
-  IconReceipt,
-  IconUserPlus,
-  IconChartBar,
-  IconPointFilled,
-} from '@tabler/icons-react';
 
 export default function DashboardPage() {
   const { contacts, deals, tasks, searchQuery } = useCRM();
@@ -34,35 +26,35 @@ export default function DashboardPage() {
 
       <div className="two-col">
         <Card title="Recent activity">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#555' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', fontSize: '13px', color: '#555' }}>
             <div style={{ display: 'flex', gap: '9px', alignItems: 'center' }}>
-              <IconBolt size={18} color="#d97706" />
+              <i className="ti ti-bolt" style={{ color: '#d97706', fontSize: '16px' }}></i>
               <span>Automation fired — New lead welcome email</span>
             </div>
             <div style={{ display: 'flex', gap: '9px', alignItems: 'center' }}>
-              <IconSpeakerphone size={18} color="#7c3aed" />
+              <i className="ti ti-speakerphone" style={{ color: '#7c3aed', fontSize: '16px' }}></i>
               <span>Campaign sent — Q2 Spring Outreach (420 recipients)</span>
             </div>
             <div style={{ display: 'flex', gap: '9px', alignItems: 'center' }}>
-              <IconReceipt size={18} color="#1D9E75" />
+              <i className="ti ti-receipt" style={{ color: '#1D9E75', fontSize: '16px' }}></i>
               <span>Invoice paid — INV-004 · $8,200</span>
             </div>
             <div style={{ display: 'flex', gap: '9px', alignItems: 'center' }}>
-              <IconUserPlus size={18} color="#2563eb" />
+              <i className="ti ti-user-plus" style={{ color: '#2563eb', fontSize: '16px' }}></i>
               <span>Contact added — Daria Rowe</span>
             </div>
             <div style={{ display: 'flex', gap: '9px', alignItems: 'center' }}>
-              <IconChartBar size={18} color="#d85a30" />
+              <i className="ti ti-chart-bar" style={{ color: '#d85a30', fontSize: '16px' }}></i>
               <span>Deal moved to Negotiation — Summit Group</span>
             </div>
           </div>
         </Card>
 
         <Card title="Upcoming tasks">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {filteredTasks.map((task) => (
               <div key={task.id} style={{ display: 'flex', alignItems: 'center', gap: '9px', fontSize: '13px' }}>
-                <IconPointFilled size={12} color="#1D9E75" />
+                <i className="ti ti-point-filled" style={{ color: '#1D9E75', fontSize: '12px' }}></i>
                 <span style={{ flex: 1, color: '#222' }}>{task.text}</span>
                 <span style={{ color: '#aaa', fontSize: '11px' }}>{task.due}</span>
               </div>

@@ -3,26 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  IconLayoutDashboard,
-  IconUsers,
-  IconChartBar,
-  IconCheckbox,
-  IconTarget,
-  IconCalendarEvent,
-  IconBolt,
-  IconTemplate,
-  IconSpeakerphone,
-  IconCreditCard,
-  IconFileInvoice,
-  IconChartLine,
-  IconDatabaseImport,
-  IconWorld,
-  IconSparkles,
-  IconLock,
-  IconPlug,
-  IconSettings,
-} from '@tabler/icons-react';
 import { useCRM } from '@/components/providers/CRMProvider';
 
 export const Sidebar: React.FC = () => {
@@ -36,54 +16,54 @@ export const Sidebar: React.FC = () => {
     {
       title: 'Main',
       items: [
-        { href: '/dashboard', label: 'Dashboard', icon: <IconLayoutDashboard size={16} /> },
-        { href: '/contacts', label: 'Contacts', icon: <IconUsers size={16} /> },
-        { href: '/pipeline', label: 'Pipeline', icon: <IconChartBar size={16} /> },
-        { href: '/tasks', label: 'Tasks', icon: <IconCheckbox size={16} />, badge: openTaskCount },
+        { href: '/dashboard', label: 'Dashboard', iconClass: 'ti ti-layout-dashboard' },
+        { href: '/contacts', label: 'Contacts', iconClass: 'ti ti-users' },
+        { href: '/pipeline', label: 'Pipeline', iconClass: 'ti ti-chart-bar' },
+        { href: '/tasks', label: 'Tasks', iconClass: 'ti ti-checkbox', badge: openTaskCount },
       ],
     },
     {
       title: 'Growth',
       items: [
-        { href: '/leads', label: 'Lead generation', icon: <IconTarget size={16} /> },
-        { href: '/appointments', label: 'Appointments', icon: <IconCalendarEvent size={16} />, badge: pendingApptCount },
+        { href: '/leads', label: 'Lead generation', iconClass: 'ti ti-target' },
+        { href: '/appointments', label: 'Appointments', iconClass: 'ti ti-calendar-event', badge: pendingApptCount },
       ],
     },
     {
       title: 'Marketing',
       items: [
-        { href: '/automations', label: 'Automations', icon: <IconBolt size={16} /> },
-        { href: '/templates', label: 'Email templates', icon: <IconTemplate size={16} /> },
-        { href: '/campaigns', label: 'Campaigns', icon: <IconSpeakerphone size={16} /> },
+        { href: '/automations', label: 'Automations', iconClass: 'ti ti-bolt' },
+        { href: '/templates', label: 'Email templates', iconClass: 'ti ti-template' },
+        { href: '/campaigns', label: 'Campaigns', iconClass: 'ti ti-speakerphone' },
       ],
     },
     {
       title: 'Finance',
       items: [
-        { href: '/payments', label: 'Payments', icon: <IconCreditCard size={16} /> },
-        { href: '/invoices', label: 'Invoices', icon: <IconFileInvoice size={16} /> },
+        { href: '/payments', label: 'Payments', iconClass: 'ti ti-credit-card' },
+        { href: '/invoices', label: 'Invoices', iconClass: 'ti ti-file-invoice' },
       ],
     },
     {
       title: 'Insights',
       items: [
-        { href: '/reports', label: 'Reports', icon: <IconChartLine size={16} /> },
+        { href: '/reports', label: 'Reports', iconClass: 'ti ti-chart-line' },
       ],
     },
     {
       title: 'Tools',
       items: [
-        { href: '/import', label: 'Import data', icon: <IconDatabaseImport size={16} /> },
-        { href: '/website', label: 'Website builder', icon: <IconWorld size={16} /> },
-        { href: '/ai', label: 'AI assistant', icon: <IconSparkles size={16} /> },
+        { href: '/import', label: 'Import data', iconClass: 'ti ti-database-import' },
+        { href: '/website', label: 'Website builder', iconClass: 'ti ti-world' },
+        { href: '/ai', label: 'AI assistant', iconClass: 'ti ti-sparkles' },
       ],
     },
     {
       title: 'Admin',
       items: [
-        { href: '/users', label: 'Users & licenses', icon: <IconLock size={16} /> },
-        { href: '/integrations', label: 'Integrations', icon: <IconPlug size={16} /> },
-        { href: '/settings', label: 'Settings', icon: <IconSettings size={16} /> },
+        { href: '/users', label: 'Users & licenses', iconClass: 'ti ti-lock' },
+        { href: '/integrations', label: 'Integrations', iconClass: 'ti ti-plug' },
+        { href: '/settings', label: 'Settings', iconClass: 'ti ti-settings' },
       ],
     },
   ];
@@ -114,7 +94,7 @@ export const Sidebar: React.FC = () => {
                   href={item.href}
                   className={`nav-item ${active ? 'active' : ''}`}
                 >
-                  {item.icon}
+                  <i className={item.iconClass}></i>
                   <span>{item.label}</span>
                   {item.badge !== undefined && item.badge > 0 && (
                     <span className="nav-badge">{item.badge}</span>

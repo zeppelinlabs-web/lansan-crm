@@ -5,9 +5,10 @@ import { useCRM } from '@/components/providers/CRMProvider';
 import { StatCard } from '@/components/ui/StatCard';
 import { Card } from '@/components/ui/Card';
 import { Pill } from '@/components/ui/Pill';
+import { Button } from '@/components/ui/Button';
 
 export default function LeadGenPage() {
-  const { leads, searchQuery } = useCRM();
+  const { leads, convertLeadToDeal, deleteLead, searchQuery } = useCRM();
   const [selectedSource, setSelectedSource] = useState<string>('All');
 
   const sources = ['All', 'Website', 'Referral', 'LinkedIn', 'Cold outreach', 'Import', 'Ad campaign'];
@@ -117,13 +118,38 @@ export default function LeadGenPage() {
                       padding: '12px',
                     }}
                   >
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#111' }}>{lead.name}</div>
-                    <div style={{ fontSize: '11px', color: '#888', margin: '2px 0 6px 0' }}>
-                      {lead.company} · {lead.email}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#111' }}>{lead.name}</div>
+                        <div style={{ fontSize: '11px', color: '#888', margin: '2px 0 6px 0' }}>
+                          {lead.company} · {lead.email}
+                        </div>
+                      </div>
+                      <Button
+                        variant="danger"
+                        onClick={() => deleteLead(lead.id)}
+                        title="Delete lead"
+                        style={{ padding: '2px 4px' }}
+                      >
+                        <i className="ti ti-x"></i>
+                      </Button>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px' }}>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', marginBottom: '8px' }}>
                       <span style={{ color: '#0F6E56', fontWeight: 700 }}>${lead.value.toLocaleString()}</span>
                       <span style={{ color: '#aaa' }}>{lead.source}</span>
+                    </div>
+
+                    <div style={{ paddingTop: '6px', borderTop: '1px solid #f5f5f5', display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button
+                        variant="primary"
+                        className="btn-sm"
+                        onClick={() => convertLeadToDeal(lead.id)}
+                        title="Convert lead into active deal in Pipeline"
+                      >
+                        <i className="ti ti-arrow-right" style={{ marginRight: '4px' }}></i>
+                        Convert to Deal
+                      </Button>
                     </div>
                   </div>
                 ))}

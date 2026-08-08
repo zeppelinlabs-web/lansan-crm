@@ -3,10 +3,9 @@
 import React from 'react';
 import { useCRM } from '@/components/providers/CRMProvider';
 import { Button } from '@/components/ui/Button';
-import { IconX } from '@tabler/icons-react';
 
 export default function PipelinePage() {
-  const { deals, deleteDeal, searchQuery } = useCRM();
+  const { deals, contacts, deleteDeal, searchQuery } = useCRM();
 
   const stages: ('Lead' | 'Qualified' | 'Proposal' | 'Negotiation')[] = [
     'Lead',
@@ -38,21 +37,37 @@ export default function PipelinePage() {
                 ${stageTotal.toLocaleString()} total
               </div>
 
-              {stageDeals.map((deal) => (
-                <div key={deal.id} className="deal-card">
-                  <div className="deal-name">{deal.name}</div>
-                  <div className="deal-co">{deal.company}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="deal-amount">${deal.amount.toLocaleString()}</span>
-                    <Button
-                      variant="danger"
-                      icon={<IconX size={12} />}
-                      style={{ padding: '2px 5px' }}
-                      onClick={() => deleteDeal(deal.id)}
-                    />
+              {stageDeals.map((deal) => {
+                const contact = contacts.find(
+                  (c) => c.company.toLowerCase() === deal.company.toLowerCase()
+                );
+
+                return (
+                  <div key={deal.id} className="deal-card">
+                    <div className="deal-name">{deal.name}</div>
+                    <div className="deal-co">{deal.company}</div>
+
+                    {contact && (
+                      <div style={{ fontSize: '11px', color: '#555', marginBottom: '6px', display: 'flex', alignItems: 'center' }}>
+                        <i className="ti ti-user" style={{ fontSize: '12px', marginRight: '4px', color: '#0F6E56' }}></i>
+                        <span>{contact.name}</span>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span className="deal-amount">${deal.amount.toLocaleString()}</span>
+                      <Button
+                        variant="danger"
+                        style={{ padding: '2px 5px' }}
+                        onClick={() => deleteDeal(deal.id)}
+                        title="Delete deal"
+                      >
+                        <i className="ti ti-x"></i>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {stageDeals.length === 0 && (
                 <div style={{ fontSize: '11px', color: '#aaa', textAlign: 'center', padding: '20px 0' }}>

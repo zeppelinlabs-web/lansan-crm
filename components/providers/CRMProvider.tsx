@@ -52,6 +52,7 @@ interface CRMContextType {
   contacts: Contact[];
   addContact: (contact: Omit<Contact, 'id'>) => void;
   deleteContact: (id: number) => void;
+  convertContactToLead: (contactId: number) => void;
 
   deals: Deal[];
   addDeal: (deal: Omit<Deal, 'id'>) => void;
@@ -63,6 +64,8 @@ interface CRMContextType {
 
   leads: LeadItem[];
   addLead: (lead: Omit<LeadItem, 'id' | 'added'>) => void;
+  convertLeadToDeal: (leadId: number) => void;
+  deleteLead: (id: number) => void;
 
   appointments: Appointment[];
   addAppointment: (appt: Omit<Appointment, 'id'>) => void;
@@ -116,7 +119,7 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [leads, setLeads] = useState<LeadItem[]>(initialLeads);
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [automations, setAutomations] = useState<AutomationRule[]>(initialAutomations);
-  const [automationLogs] = useState<AutomationLog[]>(initialAutomationLogs);
+  const [automationLogs, setAutomationLogs] = useState<AutomationLog[]>(initialAutomationLogs);
   const [templates, setTemplates] = useState<EmailTemplate[]>(initialTemplates);
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
@@ -134,16 +137,118 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Contacts
   const addContact = (data: Omit<Contact, 'id'>) => {
     const nextId = contacts.reduce((m, c) => Math.max(m, c.id), 0) + 1;
-    setContacts((prev) => [{ id: nextId, ...data }, ...prev]);
+    const newContact: Contact = { id: nextId, ...data };
+
+    setContacts((prev) => [newContact, ...prev]);
+
+    // Bi-directional standard: If contact is created with status "Lead", sync automatically to Leads board
+    if (data.status === 'Lead') {
+      setLeads((prevLeads) => {
+        const exists = prevLeads.some((l) => l.email.toLowerCase() === data.email.toLowerCase());
+        if (exists) return prevLeads;
+        const nextLeadId = prevLeads.reduce((m, l) => Math.max(m, l.id), 0) + 1;
+        const addedDate = new Date().toISOString().split('T')[0];
+        return [
+          {
+            id: nextLeadId,
+            name: data.name,
+            company: data.company,
+            email: data.email,
+            source: 'Direct',
+            score: 'Warm',
+            value: 10000,
+            added: addedDate,
+          },
+          ...prevLeads,
+        ];
+      });
+
+      // Log automation audit entry if active rule exists
+      setAutomationLogs((prevLogs) => [
+        {
+          id: prevLogs.reduce((m, l) => Math.max(m, l.id), 0) + 1,
+          rule: 'New lead welcome email',
+          triggeredBy: `${data.name} (${data.company})`,
+          actionTaken: 'Auto-created Lead board record & queued email',
+          time: 'Just now',
+        },
+        ...prevLogs,
+      ]);
+    }
   };
+
   const deleteContact = (id: number) => {
     setContacts((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const convertContactToLead = (contactId: number) => {
+    const contact = contacts.find((c) => c.id === contactId);
+    if (!contact) return;
+
+    // Update status to Lead
+    setContacts((prev) =>
+      prev.map((c) => (c.id === contactId ? { ...c, status: 'Lead' } : c))
+    );
+
+    // Sync to Leads board
+    setLeads((prevLeads) => {
+      const exists = prevLeads.some((l) => l.email.toLowerCase() === contact.email.toLowerCase());
+      if (exists) return prevLeads;
+      const nextLeadId = prevLeads.reduce((m, l) => Math.max(m, l.id), 0) + 1;
+      const addedDate = new Date().toISOString().split('T')[0];
+      return [
+        {
+          id: nextLeadId,
+          name: contact.name,
+          company: contact.company,
+          email: contact.email,
+          source: 'Website',
+          score: 'Warm',
+          value: 12000,
+          added: addedDate,
+        },
+        ...prevLeads,
+      ];
+    });
   };
 
   // Deals
   const addDeal = (data: Omit<Deal, 'id'>) => {
     const nextId = deals.reduce((m, d) => Math.max(m, d.id), 0) + 1;
-    setDeals((prev) => [{ id: nextId, ...data }, ...prev]);
+    const newDeal = { id: nextId, ...data };
+    setDeals((prev) => [newDeal, ...prev]);
+
+    // CRM Standard Consistency: Auto-ensure matching Contact exists & status is synced
+    setContacts((prevContacts) => {
+      const exists = prevContacts.some(
+        (c) => c.company.toLowerCase() === data.company.toLowerCase()
+      );
+      if (exists) {
+        if (data.stage !== 'Lead') {
+          return prevContacts.map((c) =>
+            c.company.toLowerCase() === data.company.toLowerCase()
+              ? { ...c, status: 'Active' }
+              : c
+          );
+        }
+        return prevContacts;
+      }
+
+      const nextContactId = prevContacts.reduce((m, c) => Math.max(m, c.id), 0) + 1;
+      const cleanCompany = data.company.trim() || 'New Account';
+      const domain = cleanCompany.toLowerCase().replace(/[^a-z0-9]/g, '');
+      return [
+        {
+          id: nextContactId,
+          name: `${cleanCompany} Representative`,
+          company: cleanCompany,
+          email: `contact@${domain || 'company'}.com`,
+          phone: '(555) 000-0000',
+          status: data.stage === 'Lead' ? 'Lead' : 'Active',
+        },
+        ...prevContacts,
+      ];
+    });
   };
   const deleteDeal = (id: number) => {
     setDeals((prev) => prev.filter((d) => d.id !== id));
@@ -164,7 +269,60 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addLead = (data: Omit<LeadItem, 'id' | 'added'>) => {
     const nextId = leads.reduce((m, l) => Math.max(m, l.id), 0) + 1;
     const added = new Date().toISOString().split('T')[0];
-    setLeads((prev) => [{ id: nextId, added, ...data }, ...prev]);
+    const newLead: LeadItem = { id: nextId, added, ...data };
+
+    setLeads((prev) => [newLead, ...prev]);
+
+    // Bi-directional standard: Automatically ensure contact exists in Contacts table
+    setContacts((prevContacts) => {
+      const exists = prevContacts.some((c) => c.email.toLowerCase() === data.email.toLowerCase());
+      if (exists) return prevContacts;
+      const nextContactId = prevContacts.reduce((m, c) => Math.max(m, c.id), 0) + 1;
+      return [
+        {
+          id: nextContactId,
+          name: data.name,
+          company: data.company,
+          email: data.email,
+          phone: '—',
+          status: 'Lead',
+        },
+        ...prevContacts,
+      ];
+    });
+  };
+
+  const deleteLead = (id: number) => {
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+  };
+
+  // Standard Lead Conversion Workflow: Lead -> Deal & Active Contact
+  const convertLeadToDeal = (leadId: number) => {
+    const lead = leads.find((l) => l.id === leadId);
+    if (!lead) return;
+
+    // 1. Create new Deal in Pipeline under "Qualified" stage
+    const nextDealId = deals.reduce((m, d) => Math.max(m, d.id), 0) + 1;
+    const newDeal: Deal = {
+      id: nextDealId,
+      name: `${lead.company} Contract`,
+      company: lead.company,
+      amount: lead.value || 15000,
+      stage: 'Qualified',
+    };
+    setDeals((prev) => [newDeal, ...prev]);
+
+    // 2. Update contact status to "Active"
+    setContacts((prev) =>
+      prev.map((c) =>
+        c.email.toLowerCase() === lead.email.toLowerCase()
+          ? { ...c, status: 'Active' }
+          : c
+      )
+    );
+
+    // 3. Remove from Lead board or update score
+    setLeads((prev) => prev.filter((l) => l.id !== leadId));
   };
 
   // Appointments
@@ -286,6 +444,7 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         contacts,
         addContact,
         deleteContact,
+        convertContactToLead,
         deals,
         addDeal,
         deleteDeal,
@@ -294,6 +453,8 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toggleTask,
         leads,
         addLead,
+        convertLeadToDeal,
+        deleteLead,
         appointments,
         addAppointment,
         automations,

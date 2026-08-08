@@ -33,7 +33,7 @@ export interface LeadItem {
   name: string;
   company: string;
   email: string;
-  source: 'Website' | 'Referral' | 'LinkedIn' | 'Cold outreach' | 'Import' | 'Ad campaign';
+  source: 'Website' | 'Referral' | 'LinkedIn' | 'Cold outreach' | 'Import' | 'Ad campaign' | 'Direct';
   score: 'Hot' | 'Warm' | 'Cold';
   value: number;
   added: string;

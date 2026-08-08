@@ -2,9 +2,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { IconSearch, IconPlus, IconSparkles } from '@tabler/icons-react';
 import { useCRM, ModalType } from '@/components/providers/CRMProvider';
-import { Button } from '@/components/ui/Button';
 
 export const Topbar: React.FC = () => {
   const pathname = usePathname();
@@ -71,7 +69,7 @@ export const Topbar: React.FC = () => {
     <div className="topbar">
       <div className="topbar-title">{config.title}</div>
       <div className="search-wrap">
-        <IconSearch className="search-icon" size={16} />
+        <i className="ti ti-search"></i>
         <input
           type="text"
           placeholder="Search Lansan..."
@@ -79,13 +77,10 @@ export const Topbar: React.FC = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <Button
-        variant="primary"
-        icon={config.modal === 'addAutomation' ? <IconSparkles size={16} /> : <IconPlus size={16} />}
-        onClick={handleAction}
-      >
+      <button className="btn btn-primary" onClick={handleAction}>
+        <i className={config.modal === 'addAutomation' ? 'ti ti-sparkles' : 'ti ti-plus'}></i>
         <span>{config.btnLabel}</span>
-      </Button>
+      </button>
     </div>
   );
 };

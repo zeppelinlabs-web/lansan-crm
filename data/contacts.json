@@ -1,5 +1,6 @@
 [
   { "id": 1, "name": "Daria Rowe", "company": "Summit Group", "email": "daria@summit.com", "phone": "(555) 234-5678", "status": "Active" },
   { "id": 2, "name": "Marcus Vance", "company": "Apex Solutions", "email": "m.vance@apex.io", "phone": "(555) 876-5432", "status": "Lead" },
-  { "id": 3, "name": "Elena Rostova", "company": "TechFlow Inc", "email": "elena@techflow.dev", "phone": "(555) 345-6789", "status": "Active" }
+  { "id": 3, "name": "Elena Rostova", "company": "TechFlow Inc", "email": "elena@techflow.dev", "phone": "(555) 345-6789", "status": "Active" },
+  { "id": 4, "name": "Amanda Chen", "company": "Vanguard Co", "email": "amanda@vanguard.com", "phone": "(555) 901-2345", "status": "Lead" }
 ]
