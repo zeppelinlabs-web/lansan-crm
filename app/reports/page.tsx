@@ -18,23 +18,22 @@ export default function ReportsPage() {
         <Card title="Pipeline by stage">
           <div style={{ height: '180px', display: 'flex', alignItems: 'flex-end', gap: '16px', padding: '10px 0' }}>
             {[
-              { stage: 'Lead', val: 7200, bg: '#e8f8f2', color: '#1D9E75', height: '20%' },
-              { stage: 'Qualified', val: 9500, bg: '#dbeafe', color: '#3b82f6', height: '32%' },
-              { stage: 'Proposal', val: 18000, bg: '#fef3c7', color: '#d97706', height: '58%' },
-              { stage: 'Negotiation', val: 42000, bg: '#ede9fe', color: '#7c3aed', height: '95%' },
+              { stage: 'Lead', val: 7200, bg: '#e8f8f2', height: '20%' },
+              { stage: 'Qualified', val: 9500, bg: '#dbeafe', height: '32%' },
+              { stage: 'Proposal', val: 18000, bg: '#fef3c7', height: '58%' },
+              { stage: 'Negotiation', val: 42000, bg: '#ede9fe', height: '95%' },
             ].map((col) => (
               <div key={col.stage} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
-                <div style={{ fontSize: '11px', fontWeight: 600, color: col.color, marginBottom: '4px' }}>${(col.val / 1000).toFixed(1)}k</div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>${(col.val / 1000).toFixed(1)}k</div>
                 <div
                   style={{
                     width: '100%',
                     height: col.height,
                     background: col.bg,
-                    border: `1.5px solid ${col.color}`,
-                    borderRadius: '6px 6px 0 0',
+                    borderRadius: '8px 8px 0 0',
                   }}
                 />
-                <div style={{ fontSize: '11px', color: '#666', marginTop: '6px', fontWeight: 600 }}>{col.stage}</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '8px', fontWeight: 600 }}>{col.stage}</div>
               </div>
             ))}
           </div>
@@ -43,25 +42,24 @@ export default function ReportsPage() {
         <Card title="Revenue by month">
           <div style={{ height: '180px', display: 'flex', alignItems: 'flex-end', gap: '12px', padding: '10px 0' }}>
             {[
-              { m: 'Jan', v: 4.2 },
-              { m: 'Feb', v: 6.8 },
-              { m: 'Mar', v: 5.1 },
-              { m: 'Apr', v: 9.4 },
-              { m: 'May', v: 8.2 },
-              { m: 'Jun', v: 11.2 },
+              { m: 'Jan', v: 4.2, bg: '#e8f8f2' },
+              { m: 'Feb', v: 6.8, bg: '#b8e6d5' },
+              { m: 'Mar', v: 5.1, bg: '#d4f1e8' },
+              { m: 'Apr', v: 9.4, bg: '#a3ddc8' },
+              { m: 'May', v: 8.2, bg: '#c2eedf' },
+              { m: 'Jun', v: 11.2, bg: '#8fd4ba' },
             ].map((bar) => (
               <div key={bar.m} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
-                <div style={{ fontSize: '10px', fontWeight: 600, color: '#0F6E56', marginBottom: '4px' }}>${bar.v}k</div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>${bar.v}k</div>
                 <div
                   style={{
                     width: '100%',
                     height: `${(bar.v / 12) * 90}%`,
-                    background: '#e8f8f2',
-                    border: '1.5px solid #1D9E75',
-                    borderRadius: '5px 5px 0 0',
+                    background: bar.bg,
+                    borderRadius: '8px 8px 0 0',
                   }}
                 />
-                <div style={{ fontSize: '11px', color: '#666', marginTop: '6px' }}>{bar.m}</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '8px', fontWeight: 600 }}>{bar.m}</div>
               </div>
             ))}
           </div>

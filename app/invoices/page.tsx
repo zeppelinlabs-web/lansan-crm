@@ -15,6 +15,7 @@ import {
   IconPrinter
 } from '@tabler/icons-react';
 import { Invoice } from '@/lib/types';
+import { jsPDF } from 'jspdf';
 
 export default function InvoicesPage() {
   const { invoices, searchQuery, openModal, updateInvoiceStatus, deleteInvoice, showToast } = useCRM();
@@ -52,11 +53,11 @@ export default function InvoicesPage() {
     showToast(`📄 Exported ${invoices.length} invoices to CSV!`);
   };
 
-  // Generate & Print / Save Single Invoice PDF Document
-  const handleDownloadInvoicePDF = (inv: Invoice) => {
+  // Generate & Print Single Invoice PDF Document
+  const handlePrintInvoice = (inv: Invoice) => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      showToast('Please allow popups to generate invoice PDF.', 'error');
+      showToast('Please allow popups to print invoice.', 'error');
       return;
     }
 
@@ -296,7 +297,212 @@ export default function InvoicesPage() {
 
     printWindow.document.write(pdfHTML);
     printWindow.document.close();
-    showToast(`📄 Generating PDF document for Invoice ${inv.id}...`);
+    showToast(`🖨️ Opening print dialog for Invoice ${inv.id}...`);
+  };
+
+  // Download Invoice as PDF (Real PDF file generation using jsPDF)
+  const handleDownloadInvoice = async (inv: Invoice) => {
+    try {
+      const doc = new jsPDF();
+      const todayStr = new Date().toISOString().split('T')[0];
+      
+      // Colors
+      const primaryColor = '#1D9E75';
+      const darkText = '#0f172a';
+      const grayText = '#64748b';
+      const lightGray = '#f1f5f9';
+      
+      // Status colors
+      let statusColor = '#d97706';
+      let statusBg = '#fef3c7';
+      if (inv.status === 'Paid') {
+        statusColor = primaryColor;
+        statusBg = '#e8f8f2';
+      } else if (inv.status === 'Overdue') {
+        statusColor = '#dc2626';
+        statusBg = '#fee2e2';
+      }
+
+      // Load and add company logo
+      try {
+        const logoImg = new Image();
+        logoImg.src = '/images/lansan_crm_logo.png';
+        await new Promise((resolve, reject) => {
+          logoImg.onload = resolve;
+          logoImg.onerror = reject;
+        });
+        
+        // Add logo image (scaled proportionally)
+        const logoHeight = 12;
+        const logoWidth = (logoImg.width / logoImg.height) * logoHeight;
+        doc.addImage(logoImg, 'PNG', 20, 15, logoWidth, logoHeight);
+      } catch (error) {
+        console.error('Logo loading failed, using fallback:', error);
+        // Fallback to letter badge if logo fails to load
+        doc.setFillColor(29, 158, 117);
+        doc.roundedRect(20, 15, 12, 12, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('L', 26, 24, { align: 'center' });
+      }
+
+      // Company Name & Tagline (moved to accommodate logo width)
+      doc.setTextColor(15, 23, 42); // darkText
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Lansan CRM', 90, 22);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139); // grayText
+      doc.text('Enterprise Sales & Finance Solutions', 90, 27);
+
+      // Invoice Number & Status (Right Side)
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(29, 158, 117);
+      doc.text(inv.id, 200, 22, { align: 'right' });
+
+      // Status Badge
+      const statusX = 200 - doc.getTextWidth(inv.status.toUpperCase()) / 2 - 10;
+      if (inv.status === 'Paid') {
+        doc.setFillColor(232, 248, 242);
+        doc.setTextColor(15, 110, 86);
+      } else if (inv.status === 'Overdue') {
+        doc.setFillColor(254, 226, 226);
+        doc.setTextColor(220, 38, 38);
+      } else {
+        doc.setFillColor(254, 243, 199);
+        doc.setTextColor(217, 119, 6);
+      }
+      doc.roundedRect(statusX, 26, doc.getTextWidth(inv.status.toUpperCase()) + 8, 6, 2, 2, 'F');
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.text(inv.status.toUpperCase(), 200, 30, { align: 'right' });
+
+      // Horizontal Line
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.5);
+      doc.line(20, 40, 190, 40);
+
+      // Billed To Section (Left)
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(148, 163, 184);
+      doc.text('BILLED TO', 20, 50);
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 23, 42);
+      doc.text(inv.client, 20, 57);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139);
+      doc.text(inv.desc, 20, 63);
+
+      // Invoice Details (Right)
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(148, 163, 184);
+      doc.text('INVOICE DETAILS', 200, 50, { align: 'right' });
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      doc.text(`Issue Date: ${todayStr}`, 200, 57, { align: 'right' });
+      doc.text(`Due Date: ${inv.due}`, 200, 63, { align: 'right' });
+
+      // Items Table Header
+      const tableTop = 75;
+      doc.setFillColor(248, 250, 252);
+      doc.rect(20, tableTop, 170, 10, 'F');
+      
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.3);
+      doc.line(20, tableTop + 10, 190, tableTop + 10);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(71, 85, 105);
+      doc.text('ITEM DESCRIPTION', 22, tableTop + 6);
+      doc.text('QTY', 110, tableTop + 6);
+      doc.text('UNIT PRICE', 130, tableTop + 6);
+      doc.text('TOTAL AMOUNT', 190, tableTop + 6, { align: 'right' });
+
+      // Table Row
+      const rowTop = tableTop + 15;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 23, 42);
+      doc.text(inv.desc, 22, rowTop);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139);
+      doc.text('Professional CRM & Account Services', 22, rowTop + 5);
+
+      doc.setFontSize(10);
+      doc.setTextColor(51, 65, 85);
+      doc.text('1', 110, rowTop);
+      doc.text(`$${inv.amount.toLocaleString()}`, 130, rowTop);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 110, 86);
+      doc.text(`$${inv.amount.toLocaleString()}`, 190, rowTop, { align: 'right' });
+
+      // Bottom Border
+      doc.setDrawColor(241, 245, 249);
+      doc.line(20, rowTop + 10, 190, rowTop + 10);
+
+      // Totals Section
+      const totalsTop = rowTop + 20;
+      const totalsX = 135;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139);
+      doc.text('Subtotal', totalsX, totalsTop);
+      doc.text(`$${inv.amount.toLocaleString()}`, 190, totalsTop, { align: 'right' });
+
+      doc.text('Tax (0%)', totalsX, totalsTop + 7);
+      doc.text('$0.00', 190, totalsTop + 7, { align: 'right' });
+
+      // Grand Total
+      doc.setDrawColor(15, 23, 42);
+      doc.setLineWidth(0.8);
+      doc.line(totalsX, totalsTop + 12, 190, totalsTop + 12);
+
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15, 23, 42);
+      doc.text('Total Due', totalsX, totalsTop + 20);
+      
+      doc.setTextColor(29, 158, 117);
+      doc.text(`$${inv.amount.toLocaleString()}`, 190, totalsTop + 20, { align: 'right' });
+
+      // Footer
+      const footerTop = 270;
+      doc.setDrawColor(241, 245, 249);
+      doc.setLineWidth(0.3);
+      doc.line(20, footerTop, 190, footerTop);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(148, 163, 184);
+      const footerText = 'Thank you for your business! For payment inquiries, contact finance@lansanconnect.com';
+      doc.text(footerText, 105, footerTop + 7, { align: 'center' });
+
+      // Save the PDF
+      const fileName = `Invoice_${inv.id}_${inv.client.replace(/\s+/g, '_')}_${todayStr}.pdf`;
+      doc.save(fileName);
+      
+      showToast(`📄 Downloaded ${fileName}`, 'success');
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      showToast('Failed to generate PDF. Please try again.', 'error');
+    }
   };
 
   return (
@@ -411,11 +617,20 @@ export default function InvoicesPage() {
                     <Button
                       variant="default"
                       size="sm"
-                      icon={<IconFileTypePdf size={14} />}
-                      onClick={() => handleDownloadInvoicePDF(inv)}
-                      title="Download/Print Invoice PDF Document"
+                      icon={<IconPrinter size={14} />}
+                      onClick={() => handlePrintInvoice(inv)}
+                      title="Print Invoice"
                     >
-                      PDF
+                      Print
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      icon={<IconFileTypePdf size={14} />}
+                      onClick={() => handleDownloadInvoice(inv)}
+                      title="Download Invoice as PDF"
+                    >
+                      Download
                     </Button>
                     <Button
                       variant="danger"

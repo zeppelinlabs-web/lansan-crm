@@ -80,29 +80,6 @@ export const Topbar: React.FC = () => {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {/* User Switcher Dropdown */}
-        <select
-          value={currentUser.id}
-          onChange={(e) => switchUser(Number(e.target.value))}
-          style={{
-            padding: '7px 12px',
-            borderRadius: '8px',
-            border: '1px solid #cbd5e1',
-            fontSize: '12px',
-            fontWeight: 700,
-            background: '#ffffff',
-            color: '#0f172a',
-            cursor: 'pointer',
-          }}
-          title="Switch Active User Profile"
-        >
-          {users.map((u) => (
-            <option key={u.id} value={u.id}>
-              👤 {u.name} ({u.role})
-            </option>
-          ))}
-        </select>
-
         <button className="btn btn-primary" onClick={handleAction}>
           <i className={config.modal === 'addAutomation' ? 'ti ti-sparkles' : 'ti ti-plus'}></i>
           <span>{config.btnLabel}</span>

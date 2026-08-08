@@ -50,110 +50,6 @@ export default function DashboardPage() {
 
   return (
     <div>
-      {/* Universal User Profile Switcher Bar */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #0b1329 0%, #0f172a 100%)',
-          borderRadius: '16px',
-          padding: '20px 24px',
-          color: '#ffffff',
-          marginBottom: '24px',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: currentUser.avatarColor || '#1D9E75',
-              color: '#ffffff',
-              fontWeight: 900,
-              fontSize: '18px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-            }}
-          >
-            {currentUser.name.charAt(0)}
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, color: '#ffffff' }}>
-                {currentUser.name}
-              </h2>
-              <span
-                style={{
-                  padding: '3px 10px',
-                  borderRadius: '12px',
-                  background:
-                    currentUser.role === 'Admin'
-                      ? 'rgba(29, 158, 117, 0.25)'
-                      : currentUser.role === 'Manager'
-                      ? 'rgba(2, 132, 199, 0.25)'
-                      : 'rgba(124, 58, 237, 0.25)',
-                  border:
-                    currentUser.role === 'Admin'
-                      ? '1px solid rgba(29, 158, 117, 0.5)'
-                      : currentUser.role === 'Manager'
-                      ? '1px solid rgba(2, 132, 199, 0.5)'
-                      : '1px solid rgba(124, 58, 237, 0.5)',
-                  color:
-                    currentUser.role === 'Admin'
-                      ? '#34d399'
-                      : currentUser.role === 'Manager'
-                      ? '#38bdf8'
-                      : '#c084fc',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  textTransform: 'uppercase',
-                }}
-              >
-                {currentUser.role} Dashboard
-              </span>
-            </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>
-              Logged in as <strong>{currentUser.email}</strong> — Active Company Session
-            </div>
-          </div>
-        </div>
-
-        {/* Profile Switcher Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.06)', padding: '6px 12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <IconUser size={14} /> Switch User View:
-          </span>
-          <div style={{ display: 'flex', gap: '6px' }}>
-            {users.map((u) => (
-              <button
-                key={u.id}
-                onClick={() => switchUser(u.id)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  background: currentUser.id === u.id ? '#1D9E75' : 'rgba(255,255,255,0.1)',
-                  color: '#ffffff',
-                  boxShadow: currentUser.id === u.id ? '0 4px 12px rgba(29, 158, 117, 0.3)' : 'none',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {u.name} ({u.role})
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* ========================================================================= */}
       {/* 1. ADMIN DASHBOARD SCREEN (LaToya) */}
@@ -171,16 +67,16 @@ export default function DashboardPage() {
             <Card title="Executive Company Revenue &amp; Growth Chart">
               <div style={{ height: '210px', display: 'flex', alignItems: 'flex-end', gap: '24px', padding: '20px 10px 0 10px' }}>
                 {[
-                  { month: 'Jan', val: 5200, height: '40%' },
-                  { month: 'Feb', val: 7800, height: '62%' },
-                  { month: 'Mar', val: 6100, height: '50%' },
-                  { month: 'Apr', val: 9900, height: '82%' },
-                  { month: 'May', val: 8700, height: '70%' },
-                  { month: 'Jun', val: totalPaid || 12700, height: '96%' },
+                  { month: 'Jan', val: 5200, height: '40%', color: '#e8f8f2' },
+                  { month: 'Feb', val: 7800, height: '62%', color: '#b8e6d5' },
+                  { month: 'Mar', val: 6100, height: '50%', color: '#d4f1e8' },
+                  { month: 'Apr', val: 9900, height: '82%', color: '#a3ddc8' },
+                  { month: 'May', val: 8700, height: '70%', color: '#c2eedf' },
+                  { month: 'Jun', val: totalPaid || 12700, height: '96%', color: '#8fd4ba' },
                 ].map((bar) => (
                   <div key={bar.month} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
-                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#0F6E56', marginBottom: '6px' }}>${bar.val.toLocaleString()}</div>
-                    <div style={{ width: '100%', height: bar.height, background: 'linear-gradient(180deg, #1D9E75 0%, #e8f8f2 100%)', borderRadius: '8px 8px 0 0' }} />
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#0F6E56', marginBottom: '6px' }}>${(bar.val / 1000).toFixed(1)}k</div>
+                    <div style={{ width: '100%', height: bar.height, background: bar.color, borderRadius: '8px 8px 0 0' }} />
                     <div style={{ fontSize: '11px', color: '#64748b', marginTop: '8px', fontWeight: 600 }}>{bar.month}</div>
                   </div>
                 ))}

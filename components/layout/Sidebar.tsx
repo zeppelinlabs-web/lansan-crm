@@ -159,23 +159,11 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Role Badge Indicator */}
-      <div style={{ padding: '10px 14px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', boxSizing: 'border-box', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: currentUser.avatarColor || '#1D9E75', flexShrink: 0 }} />
-          <span style={{ fontSize: '11px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {currentUser.role} Navigation
-          </span>
-        </div>
-        <select
-          value={currentUser.id}
-          onChange={(e) => switchUser(Number(e.target.value))}
-          style={{ padding: '2px 4px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '10px', fontWeight: 700, background: '#fff', cursor: 'pointer', maxWidth: '90px', flexShrink: 0 }}
-          title="Switch User Role"
-        >
-          {users.map((u) => (
-            <option key={u.id} value={u.id}>{u.name.split(' ')[0]} ({u.role.substring(0,4)})</option>
-          ))}
-        </select>
+      <div style={{ padding: '10px 14px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '6px', boxSizing: 'border-box', overflow: 'hidden' }}>
+        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: currentUser.avatarColor || '#1D9E75', flexShrink: 0 }} />
+        <span style={{ fontSize: '11px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {currentUser.role} Navigation
+        </span>
       </div>
 
       {/* Navigation Links */}
@@ -224,14 +212,47 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Active User Footer Card */}
-      <div style={{ padding: '10px 12px', margin: '10px 8px', background: '#f1f5f9', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', boxSizing: 'border-box' }}>
-        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: currentUser.avatarColor || '#1D9E75', color: '#fff', fontWeight: 800, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          {currentUser.name.charAt(0)}
+      <div style={{ padding: '10px 12px', margin: '10px 8px', background: '#f1f5f9', borderRadius: '8px', overflow: 'hidden', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: currentUser.avatarColor || '#1D9E75', color: '#fff', fontWeight: 800, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            {currentUser.name.charAt(0)}
+          </div>
+          <div style={{ overflow: 'hidden', flex: 1 }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.name}</div>
+            <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>{currentUser.role} Account</div>
+          </div>
         </div>
-        <div style={{ overflow: 'hidden', flex: 1 }}>
-          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.name}</div>
-          <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>{currentUser.role} Account</div>
-        </div>
+        <Link
+          href="/login"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            padding: '6px 10px',
+            background: '#fff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '6px',
+            fontSize: '11px',
+            fontWeight: 700,
+            color: '#64748b',
+            textDecoration: 'none',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#fee2e2';
+            e.currentTarget.style.borderColor = '#fca5a5';
+            e.currentTarget.style.color = '#dc2626';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#fff';
+            e.currentTarget.style.borderColor = '#e2e8f0';
+            e.currentTarget.style.color = '#64748b';
+          }}
+        >
+          <i className="ti ti-logout" style={{ fontSize: '14px' }} />
+          <span>Sign Out</span>
+        </Link>
       </div>
     </div>
   );
