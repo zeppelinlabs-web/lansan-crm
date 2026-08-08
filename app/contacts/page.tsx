@@ -3,11 +3,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { useCRM } from '@/components/providers/CRMProvider';
-import { Pill } from '@/components/ui/Pill';
 import { Button } from '@/components/ui/Button';
 
 export default function ContactsPage() {
-  const { contacts, deals, deleteContact, convertContactToLead, openModal, searchQuery } = useCRM();
+  const {
+    contacts,
+    deals,
+    leads,
+    deleteContact,
+    updateContactLeadScore,
+    updateContactStatus,
+    openModal,
+    openAddDealForContact,
+    searchQuery,
+  } = useCRM();
 
   const filteredContacts = contacts.filter(
     (c) =>
@@ -44,7 +53,8 @@ export default function ContactsPage() {
               <th>Email</th>
               <th>Phone</th>
               <th>Pipeline Value</th>
-              <th>Status</th>
+              <th>Lead Board Status</th>
+              <th>Contact Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -54,6 +64,44 @@ export default function ContactsPage() {
                 (d) => d.company.toLowerCase() === c.company.toLowerCase()
               );
               const dealTotal = contactDeals.reduce((sum, d) => sum + d.amount, 0);
+
+              const matchingLead = leads.find(
+                (l) => l.email.toLowerCase() === c.email.toLowerCase() || l.name.toLowerCase() === c.name.toLowerCase()
+              );
+
+              const leadScore = matchingLead ? matchingLead.score : 'Remove';
+
+              const leadBg =
+                leadScore === 'Hot'
+                  ? '#fee2e2'
+                  : leadScore === 'Warm'
+                  ? '#fef3c7'
+                  : leadScore === 'Cold'
+                  ? '#dbeafe'
+                  : '#f3f4f6';
+
+              const leadColor =
+                leadScore === 'Hot'
+                  ? '#991b1b'
+                  : leadScore === 'Warm'
+                  ? '#92400e'
+                  : leadScore === 'Cold'
+                  ? '#1e40af'
+                  : '#6b7280';
+
+              const statusBg =
+                c.status === 'Active'
+                  ? '#e8f8f2'
+                  : c.status === 'Lead'
+                  ? '#dbeafe'
+                  : '#f3f4f6';
+
+              const statusColor =
+                c.status === 'Active'
+                  ? '#0F6E56'
+                  : c.status === 'Lead'
+                  ? '#1e40af'
+                  : '#6b7280';
 
               return (
                 <tr key={c.id}>
@@ -78,28 +126,78 @@ export default function ContactsPage() {
                     )}
                   </td>
                   <td>
-                    <Pill status={c.status} />
+                    <select
+                      value={leadScore}
+                      onChange={(e) => updateContactLeadScore(c.id, e.target.value as any)}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        background: leadBg,
+                        color: leadColor,
+                        cursor: 'pointer',
+                        outline: 'none',
+                      }}
+                      title="Update status on Lead Board"
+                    >
+                      <option value="Remove">Not on Lead Board</option>
+                      <option value="Hot">🔥 Hot Lead</option>
+                      <option value="Warm">⚡ Warm Lead</option>
+                      <option value="Cold">❄️ Cold Lead</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      value={c.status}
+                      onChange={(e) => updateContactStatus(c.id, e.target.value)}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        background: statusBg,
+                        color: statusColor,
+                        cursor: 'pointer',
+                        outline: 'none',
+                      }}
+                    >
+                      <option value="Lead">Lead</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <Button
                         variant="sm"
-                        onClick={() => openModal('addDeal')}
-                        title="Create new pipeline deal for this company"
+                        onClick={() => openAddDealForContact(c)}
+                        title={`Create new deal for ${c.name} (${c.company})`}
                       >
                         <i className="ti ti-chart-bar" style={{ marginRight: '4px' }}></i>
                         Add Deal
                       </Button>
-                      {c.status !== 'Lead' && (
-                        <Button
-                          variant="sm"
-                          onClick={() => convertContactToLead(c.id)}
-                          title="Promote contact to Lead generation board"
-                        >
-                          <i className="ti ti-target" style={{ marginRight: '4px' }}></i>
-                          Add to Leads
-                        </Button>
-                      )}
+
+                      <Button
+                        variant="sm"
+                        onClick={() =>
+                          updateContactLeadScore(
+                            c.id,
+                            matchingLead
+                              ? matchingLead.score === 'Hot'
+                                ? 'Warm'
+                                : 'Hot'
+                              : 'Warm'
+                          )
+                        }
+                        title="Add to or promote on Lead generation board"
+                      >
+                        <i className="ti ti-target" style={{ marginRight: '4px' }}></i>
+                        {matchingLead ? 'Update Lead' : 'Add to Leads'}
+                      </Button>
+
                       <Button
                         variant="danger"
                         onClick={() => deleteContact(c.id)}
@@ -114,7 +212,7 @@ export default function ContactsPage() {
             })}
             {filteredContacts.length === 0 && (
               <tr>
-                <td colSpan={7} style={{ textAlign: 'center', color: '#aaa', padding: '20px' }}>
+                <td colSpan={8} style={{ textAlign: 'center', color: '#aaa', padding: '20px' }}>
                   No contacts found.
                 </td>
               </tr>

@@ -16,6 +16,8 @@ export interface Deal {
   id: number;
   name: string;
   company: string;
+  contactName?: string;
+  contactId?: number;
   amount: number;
   stage: 'Lead' | 'Qualified' | 'Proposal' | 'Negotiation';
 }

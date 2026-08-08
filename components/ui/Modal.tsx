@@ -9,6 +9,7 @@ interface ModalProps {
   onClose: () => void;
   onSave?: () => void;
   saveLabel?: string;
+  isLoading?: boolean;
   children: React.ReactNode;
 }
 
@@ -18,6 +19,7 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   onSave,
   saveLabel = 'Save',
+  isLoading = false,
   children,
 }) => {
   if (!isOpen) return null;
@@ -32,9 +34,24 @@ export const Modal: React.FC<ModalProps> = ({
             fontSize: '15px',
             fontWeight: 700,
             color: 'var(--text-heading)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          {title}
+          <span>{title}</span>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#888',
+              padding: '4px',
+            }}
+          >
+            <i className="ti ti-x" style={{ fontSize: '18px' }}></i>
+          </button>
         </div>
         <div style={{ padding: '20px', flex: 1 }}>{children}</div>
         <div
@@ -49,12 +66,19 @@ export const Modal: React.FC<ModalProps> = ({
             borderBottomRightRadius: '14px',
           }}
         >
-          <Button variant="sm" onClick={onClose}>
+          <Button variant="sm" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
           {onSave && (
-            <Button variant="primary" className="btn-sm" onClick={onSave}>
-              {saveLabel}
+            <Button variant="primary" className="btn-sm" onClick={onSave} disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <i className="ti ti-loader-2 spin" style={{ marginRight: '6px' }}></i>
+                  Saving...
+                </>
+              ) : (
+                saveLabel
+              )}
             </Button>
           )}
         </div>

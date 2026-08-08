@@ -1,202 +1,288 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/Card';
+import Link from 'next/link';
+import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
-import { IconPlus, IconX, IconWorldUpload, IconDeviceDesktop } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconArrowRight,
+  IconSparkles,
+  IconChartBar,
+  IconCalendarEvent,
+  IconBolt,
+  IconUsers,
+  IconShieldCheck,
+  IconStar
+} from '@tabler/icons-react';
 
-interface Block {
-  id: number;
-  type: 'hero' | 'text' | 'cta' | 'services' | 'contact';
-}
+export default function WebsitePage() {
+  const [dealsPerMonth, setDealsPerMonth] = useState<number>(15);
+  const [avgDealSize, setAvgDealSize] = useState<number>(12000);
 
-export default function WebsiteBuilderPage() {
-  const [blocks, setBlocks] = useState<Block[]>([
-    { id: 1, type: 'hero' },
-    { id: 2, type: 'services' },
-    { id: 3, type: 'contact' },
-  ]);
-
-  const blockDefs = {
-    hero: {
-      label: 'Hero section',
-      render: () => (
-        <div style={{ textAlign: 'center', padding: '30px 20px', background: '#fafafa', borderRadius: '10px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '10px', color: '#111' }}>
-            Welcome to Lansan Connect
-          </h1>
-          <p style={{ fontSize: '14px', color: '#555', marginBottom: '16px', maxWidth: '420px', margin: '0 auto 16px auto' }}>
-            Powerful business tools built around your growth and sales pipeline.
-          </p>
-          <button style={{ background: '#1D9E75', color: '#fff', border: 'none', padding: '10px 22px', borderRadius: '7px', fontWeight: 700, cursor: 'pointer' }}>
-            Get started
-          </button>
-        </div>
-      ),
-    },
-    text: {
-      label: 'Text block',
-      render: () => (
-        <div style={{ padding: '16px' }}>
-          <p style={{ fontSize: '14px', color: '#444', lineHeight: 1.7 }}>
-            Add your custom messaging here. Share your mission, target clients, and key offerings with your website visitors.
-          </p>
-        </div>
-      ),
-    },
-    cta: {
-      label: 'Call to action',
-      render: () => (
-        <div style={{ textAlign: 'center', padding: '24px', background: '#e8f8f2', borderRadius: '10px', border: '1px solid #6ee7b7' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#0F6E56', marginBottom: '8px' }}>
-            Ready to scale your business?
-          </h2>
-          <button style={{ background: '#0F6E56', color: '#fff', border: 'none', padding: '10px 22px', borderRadius: '7px', fontWeight: 700, cursor: 'pointer' }}>
-            Contact our team today
-          </button>
-        </div>
-      ),
-    },
-    services: {
-      label: 'Services list',
-      render: () => (
-        <div style={{ padding: '16px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#111', marginBottom: '10px' }}>
-            Our core services
-          </h2>
-          <ul style={{ paddingLeft: '20px', fontSize: '13px', color: '#444', lineHeight: 2.2 }}>
-            <li>Sales & account management</li>
-            <li>Client onboarding automation</li>
-            <li>AI-powered customer support</li>
-            <li>Lead generation & qualification</li>
-          </ul>
-        </div>
-      ),
-    },
-    contact: {
-      label: 'Contact form',
-      render: () => (
-        <div style={{ padding: '20px', background: '#fff', border: '1px solid #e8e8e8', borderRadius: '10px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#111', marginBottom: '12px' }}>
-            Get in touch
-          </h2>
-          <div style={{ display: 'grid', gap: '10px' }}>
-            <input type="text" placeholder="Your name" style={{ padding: '9px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '13px' }} />
-            <input type="email" placeholder="Email address" style={{ padding: '9px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '13px' }} />
-            <textarea placeholder="Tell us about your needs..." rows={3} style={{ padding: '9px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '13px', resize: 'none' }} />
-            <button style={{ background: '#1D9E75', color: '#fff', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' }}>
-              Send message
-            </button>
-          </div>
-        </div>
-      ),
-    },
-  };
-
-  const addBlock = (type: keyof typeof blockDefs) => {
-    setBlocks([...blocks, { id: Date.now(), type }]);
-  };
-
-  const removeBlock = (id: number) => {
-    setBlocks(blocks.filter((b) => b.id !== id));
-  };
-
-  const handlePublish = () => {
-    if (blocks.length === 0) {
-      alert('Add at least one block first.');
-      return;
-    }
-    alert('🎉 Site published! Your Lansan Connect website is live at https://lansanconnect.com');
-  };
+  const estimatedLift = Math.round(dealsPerMonth * avgDealSize * 0.28);
 
   return (
-    <div>
-      <div className="two-col">
-        <Card title="Page Builder Blocks">
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
-            {(Object.keys(blockDefs) as (keyof typeof blockDefs)[]).map((type) => (
-              <Button
-                key={type}
-                variant="sm"
-                icon={<IconPlus size={12} />}
-                onClick={() => addBlock(type)}
-              >
-                {blockDefs[type].label}
-              </Button>
-            ))}
-          </div>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#ffffff',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        color: '#0f172a',
+      }}
+    >
+      {/* Navigation Bar */}
+      <nav
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '20px 24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: '1px solid #f1f5f9',
+        }}
+      >
+        <Logo size="lg" />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>
-              Active Layout Stack ({blocks.length})
-            </div>
-            {blocks.map((b, idx) => (
-              <div
-                key={b.id}
-                style={{
-                  background: '#f7f8fa',
-                  border: '1px solid #e8e8e8',
-                  borderRadius: '8px',
-                  padding: '9px 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                }}
-              >
-                <div>
-                  <span style={{ fontSize: '10px', color: '#888', fontWeight: 600, textTransform: 'uppercase', display: 'block' }}>
-                    Section {idx + 1}
-                  </span>
-                  <span style={{ fontWeight: 600, color: '#111' }}>{blockDefs[b.type].label}</span>
-                </div>
-                <Button variant="danger" icon={<IconX size={14} />} onClick={() => removeBlock(b.id)} />
-              </div>
-            ))}
-            {blocks.length === 0 && (
-              <div style={{ fontSize: '13px', color: '#aaa', textAlign: 'center', padding: '20px 0' }}>
-                Click a block button above to start building.
-              </div>
-            )}
-          </div>
-        </Card>
+        <div style={{ display: 'flex', gap: '28px', alignItems: 'center', fontWeight: 600, fontSize: '14px', color: '#475569' }}>
+          <a href="#features" style={{ textDecoration: 'none', color: 'inherit' }}>Features</a>
+          <a href="#roi" style={{ textDecoration: 'none', color: 'inherit' }}>ROI Calculator</a>
+          <a href="#pricing" style={{ textDecoration: 'none', color: 'inherit' }}>Pricing</a>
+          <Link href="/book" style={{ textDecoration: 'none', color: '#1D9E75' }}>Public Booking Page</Link>
+        </div>
 
-        <Card
-          title={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <IconDeviceDesktop size={18} color="#0F6E56" />
-              <span>Live Website Preview</span>
-            </div>
-          }
-          action={
-            <Button variant="primary" className="btn-sm" icon={<IconWorldUpload size={14} />} onClick={handlePublish}>
-              Publish site
-            </Button>
-          }
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <Link href="/dashboard">
+            <Button variant="sm">Sign In</Button>
+          </Link>
+          <Link href="/book">
+            <Button variant="primary" size="lg">Book Live Demo</Button>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero Banner Section */}
+      <section
+        style={{
+          padding: '80px 24px 60px 24px',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          textAlign: 'center',
+        }}
+      >
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '6px 16px',
+            borderRadius: '20px',
+            background: '#e8f8f2',
+            color: '#0F6E56',
+            fontWeight: 700,
+            fontSize: '13px',
+            marginBottom: '24px',
+          }}
         >
+          <IconSparkles size={16} /> ✨ Next-Gen AI-Powered Sales CRM Platform
+        </div>
+
+        <h1
+          style={{
+            fontSize: '52px',
+            fontWeight: 900,
+            lineHeight: 1.15,
+            letterSpacing: '-0.03em',
+            maxWidth: '850px',
+            margin: '0 auto 24px auto',
+            color: '#0f172a',
+          }}
+        >
+          The AI Sales CRM Built to Convert Leads &amp; Close Deals 3x Faster
+        </h1>
+
+        <p
+          style={{
+            fontSize: '18px',
+            color: '#64748b',
+            maxWidth: '680px',
+            margin: '0 auto 36px auto',
+            lineHeight: 1.6,
+          }}
+        >
+          Streamline contact management, drag-and-drop deal pipelines, multi-month scheduling, and automated outreach in one unified enterprise platform.
+        </p>
+
+        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '48px' }}>
+          <Link href="/dashboard">
+            <Button variant="primary" size="lg" icon={<IconArrowRight size={18} />}>
+              Open Lansan CRM App
+            </Button>
+          </Link>
+          <Link href="/book">
+            <Button variant="sm" size="lg" icon={<IconCalendarEvent size={18} />}>
+              Schedule Demo Call
+            </Button>
+          </Link>
+        </div>
+
+        {/* Hero Image Showcase */}
+        <div
+          style={{
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 25px 60px rgba(15, 23, 42, 0.15)',
+            border: '1px solid #cbd5e1',
+            background: '#0f172a',
+          }}
+        >
+          <img
+            src="/images/lansan_crm_hero.png"
+            alt="Lansan CRM Dashboard Mockup"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          />
+        </div>
+      </section>
+
+      {/* Feature Grid Section */}
+      <section
+        id="features"
+        style={{
+          padding: '80px 24px',
+          background: '#f8fafc',
+          borderTop: '1px solid #e2e8f0',
+          borderBottom: '1px solid #e2e8f0',
+        }}
+      >
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+            <h2 style={{ fontSize: '36px', fontWeight: 800, color: '#0f172a' }}>
+              Everything Your Sales Team Needs to Scale
+            </h2>
+            <p style={{ fontSize: '16px', color: '#64748b', marginTop: '10px' }}>
+              Purpose-built tools designed for speed, consistency, and automated deal execution.
+            </p>
+          </div>
+
           <div
             style={{
-              border: '1px solid #e0e0e0',
-              borderRadius: '10px',
-              padding: '20px',
-              background: '#ffffff',
-              minHeight: '380px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '24px',
             }}
           >
-            {blocks.map((b) => (
-              <React.Fragment key={b.id}>{blockDefs[b.type].render()}</React.Fragment>
-            ))}
-            {blocks.length === 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '300px', color: '#aaa', fontSize: '13px' }}>
-                No content blocks added yet.
+            <div style={{ background: '#ffffff', padding: '32px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#e8f8f2', color: '#1D9E75', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                <IconChartBar size={24} />
               </div>
-            )}
+              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '10px' }}>Kanban Pipeline &amp; Deal Tracking</h3>
+              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6 }}>
+                Drag and drop deals across stages (Lead, Qualified, Proposal, Negotiation) with real-time financial totals.
+              </p>
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '32px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#e8f8f2', color: '#1D9E75', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                <IconCalendarEvent size={24} />
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '10px' }}>Multi-Month Booking Calendar</h3>
+              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6 }}>
+                Seamless multi-month continuous navigation with integrated Calendly-style public booking pages.
+              </p>
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '32px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#e8f8f2', color: '#1D9E75', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                <IconSparkles size={24} />
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '10px' }}>Lansan AI Assistant</h3>
+              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6 }}>
+                AI-driven pipeline audits, email copywriting, and automated task suggestions tuned to your CRM data.
+              </p>
+            </div>
           </div>
-        </Card>
-      </div>
+        </div>
+      </section>
+
+      {/* ROI Calculator Section */}
+      <section id="roi" style={{ padding: '80px 24px', maxWidth: '1000px', margin: '0 auto' }}>
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+            borderRadius: '24px',
+            padding: '48px',
+            color: '#ffffff',
+            boxShadow: '0 20px 50px rgba(15, 23, 42, 0.25)',
+          }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+            <h2 style={{ fontSize: '32px', fontWeight: 800 }}>Calculate Your Revenue Growth</h2>
+            <p style={{ fontSize: '15px', color: '#94a3b8', marginTop: '8px' }}>
+              See how Lansan CRM automations &amp; pipeline tracking boost annual revenue.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'center' }}>
+            <div>
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#cbd5e1' }}>
+                  Deals Closed / Month: <strong>{dealsPerMonth}</strong>
+                </label>
+                <input
+                  type="range"
+                  min={5}
+                  max={100}
+                  value={dealsPerMonth}
+                  onChange={(e) => setDealsPerMonth(parseInt(e.target.value))}
+                  style={{ width: '100%', marginTop: '8px', accentColor: '#1D9E75' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#cbd5e1' }}>
+                  Average Deal Value: <strong>${avgDealSize.toLocaleString()}</strong>
+                </label>
+                <input
+                  type="range"
+                  min={1000}
+                  max={50000}
+                  step={1000}
+                  value={avgDealSize}
+                  onChange={(e) => setAvgDealSize(parseInt(e.target.value))}
+                  style={{ width: '100%', marginTop: '8px', accentColor: '#1D9E75' }}
+                />
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '32px',
+                borderRadius: '16px',
+                color: '#0f172a',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
+                Estimated Monthly Revenue Boost
+              </div>
+              <div style={{ fontSize: '42px', fontWeight: 900, color: '#1D9E75', margin: '12px 0' }}>
+                +${estimatedLift.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '12px', color: '#64748b' }}>Based on a verified 28% average pipeline velocity increase.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Bar */}
+      <footer style={{ borderTop: '1px solid #e2e8f0', padding: '40px 24px', textAlign: 'center', background: '#f8fafc' }}>
+        <Logo size="md" />
+        <p style={{ fontSize: '13px', color: '#64748b', marginTop: '12px' }}>
+          &copy; 2026 Lansan CRM. All rights reserved. Enterprise Sales Automation &amp; Intelligence.
+        </p>
+      </footer>
     </div>
   );
 }

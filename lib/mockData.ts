@@ -23,10 +23,10 @@ export const initialContacts: Contact[] = [
 ];
 
 export const initialDeals: Deal[] = [
-  { id: 1, name: 'Call center platform', company: 'Apex Solutions', amount: 24500, stage: 'Negotiation' },
-  { id: 2, name: 'Onboarding setup', company: 'TechFlow Inc', amount: 12000, stage: 'Proposal' },
-  { id: 3, name: 'Support desk license', company: 'Summit Group', amount: 18200, stage: 'Qualified' },
-  { id: 4, name: 'CRM migration consulting', company: 'Vanguard Co', amount: 22000, stage: 'Lead' },
+  { id: 1, name: 'Call center platform', company: 'Apex Solutions', contactName: 'Marcus Vance', amount: 24500, stage: 'Negotiation' },
+  { id: 2, name: 'Onboarding setup', company: 'TechFlow Inc', contactName: 'Elena Rostova', amount: 12000, stage: 'Proposal' },
+  { id: 3, name: 'Support desk license', company: 'Summit Group', contactName: 'Daria Rowe', amount: 18200, stage: 'Qualified' },
+  { id: 4, name: 'CRM migration consulting', company: 'Vanguard Co', contactName: 'Amanda Chen', amount: 22000, stage: 'Lead' },
 ];
 
 export const initialTasks: TaskItem[] = [

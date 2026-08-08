@@ -8,10 +8,12 @@ import { Pill } from '@/components/ui/Pill';
 import { Button } from '@/components/ui/Button';
 
 export default function LeadGenPage() {
-  const { leads, convertLeadToDeal, deleteLead, searchQuery } = useCRM();
+  const { leads, moveLead, convertLeadToDeal, deleteLead, searchQuery } = useCRM();
   const [selectedSource, setSelectedSource] = useState<string>('All');
+  const [draggedLeadId, setDraggedLeadId] = useState<number | null>(null);
+  const [dragOverCategory, setDragOverCategory] = useState<string | null>(null);
 
-  const sources = ['All', 'Website', 'Referral', 'LinkedIn', 'Cold outreach', 'Import', 'Ad campaign'];
+  const sources = ['All', 'Website', 'Referral', 'LinkedIn', 'Cold outreach', 'Import', 'Ad campaign', 'Direct'];
 
   const filteredLeads = leads.filter((l) => {
     const matchesSource = selectedSource === 'All' || l.source === selectedSource;
@@ -23,6 +25,31 @@ export default function LeadGenPage() {
   });
 
   const hotCount = leads.filter((l) => l.score === 'Hot').length;
+
+  const handleDragStart = (e: React.DragEvent, leadId: number) => {
+    e.dataTransfer.setData('text/plain', String(leadId));
+    e.dataTransfer.effectAllowed = 'move';
+    setDraggedLeadId(leadId);
+  };
+
+  const handleDragOver = (e: React.DragEvent, category: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverCategory !== category) {
+      setDragOverCategory(category);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetScore: 'Hot' | 'Warm' | 'Cold') => {
+    e.preventDefault();
+    const leadIdStr = e.dataTransfer.getData('text/plain');
+    const leadId = parseInt(leadIdStr, 10);
+    if (!isNaN(leadId)) {
+      moveLead(leadId, targetScore);
+    }
+    setDragOverCategory(null);
+    setDraggedLeadId(null);
+  };
 
   return (
     <div>
@@ -61,19 +88,24 @@ export default function LeadGenPage() {
       </Card>
 
       <div className="lead-cols">
-        {['Hot', 'Warm', 'Cold'].map((scoreCategory) => {
+        {(['Hot', 'Warm', 'Cold'] as const).map((scoreCategory) => {
           const scoreLeads = filteredLeads.filter((l) => l.score === scoreCategory);
+          const isOver = dragOverCategory === scoreCategory;
 
           return (
             <div
               key={scoreCategory}
+              onDragOver={(e) => handleDragOver(e, scoreCategory)}
+              onDragLeave={() => setDragOverCategory(null)}
+              onDrop={(e) => handleDrop(e, scoreCategory)}
               style={{
-                background: '#f7f8fa',
-                border: '1px solid #e8e8e8',
+                background: isOver ? '#f0fdf9' : '#f7f8fa',
+                border: isOver ? '2px dashed #1D9E75' : '1px solid #e8e8e8',
                 borderRadius: '12px',
                 padding: '12px',
                 minHeight: '220px',
                 gridColumn: 'span 2',
+                transition: 'all 0.15s ease',
               }}
             >
               <div
@@ -108,55 +140,76 @@ export default function LeadGenPage() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {scoreLeads.map((lead) => (
-                  <div
-                    key={lead.id}
-                    style={{
-                      background: '#fff',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '9px',
-                      padding: '12px',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div>
-                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#111' }}>{lead.name}</div>
-                        <div style={{ fontSize: '11px', color: '#888', margin: '2px 0 6px 0' }}>
-                          {lead.company} · {lead.email}
+                {scoreLeads.map((lead) => {
+                  const isDragging = draggedLeadId === lead.id;
+
+                  return (
+                    <div
+                      key={lead.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, lead.id)}
+                      onDragEnd={() => {
+                        setDraggedLeadId(null);
+                        setDragOverCategory(null);
+                      }}
+                      style={{
+                        background: '#fff',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '9px',
+                        padding: '12px',
+                        opacity: isDragging ? 0.4 : 1,
+                        cursor: 'grab',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#111', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <i className="ti ti-grip-vertical" style={{ color: '#aaa', fontSize: '14px', cursor: 'grab' }}></i>
+                            <span>{lead.name}</span>
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#888', margin: '2px 0 6px 20px' }}>
+                            {lead.company} · {lead.email}
+                          </div>
                         </div>
+                        <Button
+                          variant="danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteLead(lead.id);
+                          }}
+                          title="Delete lead"
+                          style={{ padding: '2px 4px' }}
+                        >
+                          <i className="ti ti-x"></i>
+                        </Button>
                       </div>
-                      <Button
-                        variant="danger"
-                        onClick={() => deleteLead(lead.id)}
-                        title="Delete lead"
-                        style={{ padding: '2px 4px' }}
-                      >
-                        <i className="ti ti-x"></i>
-                      </Button>
-                    </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', marginBottom: '8px' }}>
-                      <span style={{ color: '#0F6E56', fontWeight: 700 }}>${lead.value.toLocaleString()}</span>
-                      <span style={{ color: '#aaa' }}>{lead.source}</span>
-                    </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', marginBottom: '8px' }}>
+                        <span style={{ color: '#0F6E56', fontWeight: 700 }}>${lead.value.toLocaleString()}</span>
+                        <span style={{ color: '#aaa' }}>{lead.source}</span>
+                      </div>
 
-                    <div style={{ paddingTop: '6px', borderTop: '1px solid #f5f5f5', display: 'flex', justifyContent: 'flex-end' }}>
-                      <Button
-                        variant="primary"
-                        className="btn-sm"
-                        onClick={() => convertLeadToDeal(lead.id)}
-                        title="Convert lead into active deal in Pipeline"
-                      >
-                        <i className="ti ti-arrow-right" style={{ marginRight: '4px' }}></i>
-                        Convert to Deal
-                      </Button>
+                      <div style={{ paddingTop: '6px', borderTop: '1px solid #f5f5f5', display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                          variant="primary"
+                          className="btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            convertLeadToDeal(lead.id);
+                          }}
+                          title="Convert lead into active deal in Pipeline"
+                        >
+                          <i className="ti ti-arrow-right" style={{ marginRight: '4px' }}></i>
+                          Convert to Deal
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {scoreLeads.length === 0 && (
                   <div style={{ fontSize: '12px', color: '#aaa', textAlign: 'center', padding: '20px 0' }}>
-                    No {scoreCategory.toLowerCase()} leads
+                    Drag lead here to set as {scoreCategory.toLowerCase()}
                   </div>
                 )}
               </div>

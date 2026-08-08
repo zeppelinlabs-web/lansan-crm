@@ -21,6 +21,9 @@ export const GlobalModals: React.FC = () => {
     addPayment,
     addUser,
     templates,
+    showToast,
+    prefillContact,
+    selectedAppointmentDate,
   } = useCRM();
 
   // Contact Form State
@@ -28,37 +31,68 @@ export const GlobalModals: React.FC = () => {
   const [cCompany, setCCompany] = useState('');
   const [cEmail, setCEmail] = useState('');
   const [cPhone, setCPhone] = useState('');
-  const [cStatus, setCStatus] = useState<'Active' | 'Lead' | 'Inactive'>('Lead');
+  const [cStatus, setCStatus] = useState<string>('Lead');
+  const [cCustomStatus, setCCustomStatus] = useState('');
 
   // Deal Form State
   const [dName, setDName] = useState('');
+  const [dContactName, setDContactName] = useState('');
   const [dCompany, setDCompany] = useState('');
   const [dAmount, setDAmount] = useState('');
-  const [dStage, setDStage] = useState<'Lead' | 'Qualified' | 'Proposal' | 'Negotiation'>('Lead');
+  const [dStage, setDStage] = useState<string>('Lead');
+  const [dCustomStage, setDCustomStage] = useState('');
+  const [selectedContactId, setSelectedContactId] = useState<string>('');
+
+  React.useEffect(() => {
+    if (prefillContact && activeModal === 'addDeal') {
+      setSelectedContactId(String(prefillContact.id));
+      setDContactName(prefillContact.name);
+      setDCompany(prefillContact.company);
+      setDName(`${prefillContact.company} Contract`);
+    }
+  }, [prefillContact, activeModal]);
 
   // Task Form State
   const [tText, setTText] = useState('');
   const [tDue, setTDue] = useState('');
-  const [tPriority, setTPriority] = useState<'High' | 'Medium' | 'Low'>('Medium');
+  const [tPriority, setTPriority] = useState<string>('Medium');
+  const [tCustomPriority, setTCustomPriority] = useState('');
 
   // Lead Form State
   const [lName, setLName] = useState('');
   const [lCompany, setLCompany] = useState('');
   const [lEmail, setLEmail] = useState('');
-  const [lSource, setLSource] = useState<'Website' | 'Referral' | 'LinkedIn' | 'Cold outreach' | 'Import' | 'Ad campaign'>('Website');
-  const [lScore, setLScore] = useState<'Hot' | 'Warm' | 'Cold'>('Warm');
+  const [lSource, setLSource] = useState<string>('Website');
+  const [lCustomSource, setLCustomSource] = useState('');
+  const [lScore, setLScore] = useState<string>('Warm');
+  const [lCustomScore, setLCustomScore] = useState('');
   const [lValue, setLValue] = useState('');
 
   // Appointment Form State
   const [aName, setAName] = useState('');
   const [aTime, setATime] = useState('09:00 AM');
+  const [aCustomTime, setACustomTime] = useState('');
+  const [aDate, setADate] = useState('2026-06-08');
   const [aType, setAType] = useState('Product Demo');
-  const [aStatus, setAStatus] = useState<'Confirmed' | 'Pending' | 'Cancelled'>('Confirmed');
+  const [aCustomType, setACustomType] = useState('');
+  const [aStatus, setAStatus] = useState<string>('Confirmed');
+  const [aCustomStatus, setACustomStatus] = useState('');
+  const [selectedApptContactId, setSelectedApptContactId] = useState<string>('');
+
+  React.useEffect(() => {
+    if (activeModal === 'addAppointment') {
+      if (selectedAppointmentDate) {
+        setADate(selectedAppointmentDate);
+      }
+    }
+  }, [selectedAppointmentDate, activeModal]);
 
   // Automation Form State
   const [autoName, setAutoName] = useState('');
   const [autoTrig, setAutoTrig] = useState('Contact added with status Lead');
+  const [autoCustomTrig, setAutoCustomTrig] = useState('');
   const [autoAct, setAutoAct] = useState('Send welcome email template');
+  const [autoCustomAct, setAutoCustomAct] = useState('');
 
   // Template Form State
   const [tplName, setTplName] = useState('');
@@ -68,7 +102,9 @@ export const GlobalModals: React.FC = () => {
   // Campaign Form State
   const [campName, setCampName] = useState('');
   const [campTpl, setCampTpl] = useState('');
+  const [campCustomTpl, setCampCustomTpl] = useState('');
   const [campAud, setCampAud] = useState('All contacts');
+  const [campCustomAud, setCampCustomAud] = useState('');
   const [campDate, setCampDate] = useState('');
 
   // Invoice Form State
@@ -85,7 +121,8 @@ export const GlobalModals: React.FC = () => {
   // User Form State
   const [uName, setUName] = useState('');
   const [uEmail, setUEmail] = useState('');
-  const [uRole, setURole] = useState<'Admin' | 'Manager' | 'Agent'>('Agent');
+  const [uRole, setURole] = useState<string>('Agent');
+  const [uCustomRole, setUCustomRole] = useState('');
 
   if (!activeModal) return null;
 
@@ -97,18 +134,23 @@ export const GlobalModals: React.FC = () => {
         title="Add contact"
         onClose={closeModal}
         onSave={() => {
-          if (!cName) return;
+          if (!cName.trim()) {
+            showToast('Please enter the contact full name.', 'error');
+            return;
+          }
+          const finalStatus = (cStatus === 'Other' ? cCustomStatus.trim() : cStatus) || 'Lead';
           addContact({
-            name: cName,
-            company: cCompany || '—',
-            email: cEmail || '—',
-            phone: cPhone || '—',
-            status: cStatus,
+            name: cName.trim(),
+            company: cCompany.trim() || '—',
+            email: cEmail.trim() || '—',
+            phone: cPhone.trim() || '—',
+            status: finalStatus as any,
           });
           setCName('');
           setCCompany('');
           setCEmail('');
           setCPhone('');
+          setCCustomStatus('');
           closeModal();
         }}
       >
@@ -134,11 +176,21 @@ export const GlobalModals: React.FC = () => {
         </div>
         <div className="form-group">
           <div className="form-label">Status</div>
-          <select value={cStatus} onChange={(e) => setCStatus(e.target.value as any)}>
+          <select value={cStatus} onChange={(e) => setCStatus(e.target.value)}>
             <option value="Lead">Lead</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
+            <option value="Other">Other (Custom...)</option>
           </select>
+          {cStatus === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter custom status (e.g. VIP Partner)..."
+              value={cCustomStatus}
+              onChange={(e) => setCCustomStatus(e.target.value)}
+              style={{ marginTop: '6px' }}
+            />
+          )}
         </div>
       </Modal>
 
@@ -148,29 +200,74 @@ export const GlobalModals: React.FC = () => {
         title="Add deal"
         onClose={closeModal}
         onSave={() => {
-          if (!dName) return;
+          if (!dName.trim()) {
+            showToast('Please enter a deal name.', 'error');
+            return;
+          }
+          if (!dCompany.trim() && !dContactName.trim()) {
+            showToast('Please select a contact or enter a company name.', 'error');
+            return;
+          }
+          const finalStage = (dStage === 'Other' ? dCustomStage.trim() : dStage) || 'Lead';
           addDeal({
-            name: dName,
-            company: dCompany || '—',
+            name: dName.trim(),
+            company: dCompany.trim() || '—',
+            contactName: dContactName.trim() || '—',
             amount: parseInt(dAmount) || 0,
-            stage: dStage,
+            stage: finalStage as any,
           });
           setDName('');
+          setDContactName('');
           setDCompany('');
           setDAmount('');
+          setDCustomStage('');
+          setSelectedContactId('');
           closeModal();
         }}
       >
+        <div className="form-group" style={{ marginBottom: '12px' }}>
+          <div className="form-label">Link Contact Person (Select from Contacts)</div>
+          <select
+            value={selectedContactId}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedContactId(val);
+              if (val && val !== 'custom') {
+                const contact = contacts.find((c) => c.id === parseInt(val));
+                if (contact) {
+                  setDContactName(contact.name);
+                  setDCompany(contact.company);
+                }
+              }
+            }}
+          >
+            <option value="">-- Select Contact Person --</option>
+            {contacts.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} ({c.company})
+              </option>
+            ))}
+            <option value="custom">+ Add new / custom contact person...</option>
+          </select>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
             <div className="form-label">Deal name</div>
-            <input type="text" placeholder="Cloud license" value={dName} onChange={(e) => setDName(e.target.value)} />
+            <input type="text" placeholder="e.g. Call center platform" value={dName} onChange={(e) => setDName(e.target.value)} />
           </div>
+          <div className="form-group">
+            <div className="form-label">Contact Person Name</div>
+            <input type="text" placeholder="e.g. Daria Rowe" value={dContactName} onChange={(e) => setDContactName(e.target.value)} />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
             <div className="form-label">Company</div>
             <input
               type="text"
-              placeholder="e.g. Apex Solutions"
+              placeholder="e.g. Summit Group"
               list="company-list-options"
               value={dCompany}
               onChange={(e) => setDCompany(e.target.value)}
@@ -181,21 +278,30 @@ export const GlobalModals: React.FC = () => {
               ))}
             </datalist>
           </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
             <div className="form-label">Amount ($)</div>
             <input type="number" placeholder="15000" value={dAmount} onChange={(e) => setDAmount(e.target.value)} />
           </div>
-          <div className="form-group">
-            <div className="form-label">Stage</div>
-            <select value={dStage} onChange={(e) => setDStage(e.target.value as any)}>
-              <option value="Lead">Lead</option>
-              <option value="Qualified">Qualified</option>
-              <option value="Proposal">Proposal</option>
-              <option value="Negotiation">Negotiation</option>
-            </select>
-          </div>
+        </div>
+
+        <div className="form-group">
+          <div className="form-label">Stage</div>
+          <select value={dStage} onChange={(e) => setDStage(e.target.value)}>
+            <option value="Lead">Lead</option>
+            <option value="Qualified">Qualified</option>
+            <option value="Proposal">Proposal</option>
+            <option value="Negotiation">Negotiation</option>
+            <option value="Other">Other (Custom stage...)</option>
+          </select>
+          {dStage === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter custom pipeline stage..."
+              value={dCustomStage}
+              onChange={(e) => setDCustomStage(e.target.value)}
+              style={{ marginTop: '6px' }}
+            />
+          )}
         </div>
       </Modal>
 
@@ -206,13 +312,15 @@ export const GlobalModals: React.FC = () => {
         onClose={closeModal}
         onSave={() => {
           if (!tText) return;
+          const finalPriority = (tPriority === 'Other' ? tCustomPriority.trim() : tPriority) || 'Medium';
           addTask({
             text: tText,
             due: tDue || 'TBD',
-            priority: tPriority,
+            priority: finalPriority as any,
           });
           setTText('');
           setTDue('');
+          setTCustomPriority('');
           closeModal();
         }}
       >
@@ -227,11 +335,21 @@ export const GlobalModals: React.FC = () => {
           </div>
           <div className="form-group">
             <div className="form-label">Priority</div>
-            <select value={tPriority} onChange={(e) => setTPriority(e.target.value as any)}>
+            <select value={tPriority} onChange={(e) => setTPriority(e.target.value)}>
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
+              <option value="Other">Other (Custom priority...)</option>
             </select>
+            {tPriority === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter custom priority (e.g. Urgent)..."
+                value={tCustomPriority}
+                onChange={(e) => setTCustomPriority(e.target.value)}
+                style={{ marginTop: '6px' }}
+              />
+            )}
           </div>
         </div>
       </Modal>
@@ -243,18 +361,22 @@ export const GlobalModals: React.FC = () => {
         onClose={closeModal}
         onSave={() => {
           if (!lName) return;
+          const finalSource = (lSource === 'Other' ? lCustomSource.trim() : lSource) || 'Website';
+          const finalScore = (lScore === 'Other' ? lCustomScore.trim() : lScore) || 'Warm';
           addLead({
             name: lName,
             company: lCompany || '—',
             email: lEmail || '—',
-            source: lSource,
-            score: lScore,
+            source: finalSource as any,
+            score: finalScore as any,
             value: parseInt(lValue) || 5000,
           });
           setLName('');
           setLCompany('');
           setLEmail('');
           setLValue('');
+          setLCustomSource('');
+          setLCustomScore('');
           closeModal();
         }}
       >
@@ -271,22 +393,43 @@ export const GlobalModals: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
             <div className="form-label">Source</div>
-            <select value={lSource} onChange={(e) => setLSource(e.target.value as any)}>
+            <select value={lSource} onChange={(e) => setLSource(e.target.value)}>
               <option value="Website">Website</option>
               <option value="Referral">Referral</option>
               <option value="LinkedIn">LinkedIn</option>
               <option value="Cold outreach">Cold outreach</option>
               <option value="Import">Import</option>
               <option value="Ad campaign">Ad campaign</option>
+              <option value="Direct">Direct</option>
+              <option value="Other">Other (Custom source...)</option>
             </select>
+            {lSource === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter custom source (e.g. Trade Show)..."
+                value={lCustomSource}
+                onChange={(e) => setLCustomSource(e.target.value)}
+                style={{ marginTop: '6px' }}
+              />
+            )}
           </div>
           <div className="form-group">
             <div className="form-label">Score tag</div>
-            <select value={lScore} onChange={(e) => setLScore(e.target.value as any)}>
+            <select value={lScore} onChange={(e) => setLScore(e.target.value)}>
               <option value="Hot">Hot</option>
               <option value="Warm">Warm</option>
               <option value="Cold">Cold</option>
+              <option value="Other">Other (Custom score...)</option>
             </select>
+            {lScore === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter custom score (e.g. Qualified)..."
+                value={lCustomScore}
+                onChange={(e) => setLCustomScore(e.target.value)}
+                style={{ marginTop: '6px' }}
+              />
+            )}
           </div>
         </div>
       </Modal>
@@ -297,30 +440,149 @@ export const GlobalModals: React.FC = () => {
         title="Schedule appointment"
         onClose={closeModal}
         onSave={() => {
-          if (!aName) return;
+          if (!aName.trim()) {
+            showToast('Please enter an appointment title.', 'error');
+            return;
+          }
+          if (!aDate) {
+            showToast('Please select a date for the appointment.', 'error');
+            return;
+          }
+          const finalTime = aTime === 'Other' ? aCustomTime.trim() || '09:00 AM' : aTime;
+          const finalType = aType === 'Other' ? aCustomType.trim() || 'Meeting' : aType;
+          const finalStatus = aStatus === 'Other' ? aCustomStatus.trim() || 'Confirmed' : aStatus;
+
           addAppointment({
-            name: aName,
-            time: aTime,
-            type: aType,
-            status: aStatus,
-            date: 'Today',
+            name: aName.trim(),
+            time: finalTime,
+            type: finalType,
+            status: finalStatus as any,
+            date: aDate,
           });
           setAName('');
+          setACustomTime('');
+          setACustomType('');
+          setACustomStatus('');
+          setSelectedApptContactId('');
           closeModal();
         }}
       >
-        <div className="form-group">
-          <div className="form-label">Appointment title / contact</div>
-          <input type="text" placeholder="John Doe — Discovery Call" value={aName} onChange={(e) => setAName(e.target.value)} />
+        <div className="form-group" style={{ marginBottom: '12px' }}>
+          <div className="form-label">Link Contact Person (Optional)</div>
+          <select
+            value={selectedApptContactId}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedApptContactId(val);
+              if (val) {
+                const contact = contacts.find((c) => c.id === parseInt(val));
+                if (contact) {
+                  setAName(`${contact.name} — ${contact.company} Call`);
+                }
+              }
+            }}
+          >
+            <option value="">-- Select Contact from CRM --</option>
+            {contacts.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} ({c.company})
+              </option>
+            ))}
+          </select>
         </div>
+
+        <div className="form-group">
+          <div className="form-label">Appointment title / details</div>
+          <input
+            type="text"
+            placeholder="e.g. Daria Rowe — Summit Contract Review"
+            value={aName}
+            onChange={(e) => setAName(e.target.value)}
+          />
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
-            <div className="form-label">Time</div>
-            <input type="text" value={aTime} onChange={(e) => setATime(e.target.value)} />
+            <div className="form-label">Date</div>
+            <input
+              type="date"
+              value={aDate}
+              onChange={(e) => setADate(e.target.value)}
+            />
           </div>
           <div className="form-group">
-            <div className="form-label">Type</div>
-            <input type="text" value={aType} onChange={(e) => setAType(e.target.value)} />
+            <div className="form-label">Time slot</div>
+            <select value={aTime} onChange={(e) => setATime(e.target.value)}>
+              <option value="08:00 AM">08:00 AM</option>
+              <option value="08:30 AM">08:30 AM</option>
+              <option value="09:00 AM">09:00 AM</option>
+              <option value="09:30 AM">09:30 AM</option>
+              <option value="10:00 AM">10:00 AM</option>
+              <option value="10:30 AM">10:30 AM</option>
+              <option value="11:00 AM">11:00 AM</option>
+              <option value="11:30 AM">11:30 AM</option>
+              <option value="12:00 PM">12:00 PM</option>
+              <option value="01:00 PM">01:00 PM</option>
+              <option value="01:30 PM">01:30 PM</option>
+              <option value="02:00 PM">02:00 PM</option>
+              <option value="02:30 PM">02:30 PM</option>
+              <option value="03:00 PM">03:00 PM</option>
+              <option value="03:30 PM">03:30 PM</option>
+              <option value="04:00 PM">04:00 PM</option>
+              <option value="04:30 PM">04:30 PM</option>
+              <option value="05:00 PM">05:00 PM</option>
+              <option value="Other">Other (Custom time...)</option>
+            </select>
+            {aTime === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter custom time (e.g. 06:15 PM)..."
+                value={aCustomTime}
+                onChange={(e) => setACustomTime(e.target.value)}
+                style={{ marginTop: '6px' }}
+              />
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div className="form-group">
+            <div className="form-label">Appointment Type</div>
+            <select value={aType} onChange={(e) => setAType(e.target.value)}>
+              <option value="Video call">Video call</option>
+              <option value="Product Demo">Product Demo</option>
+              <option value="Discovery">Discovery</option>
+              <option value="Sales Call">Sales Call</option>
+              <option value="Contract Review">Contract Review</option>
+              <option value="Onboarding Check-in">Onboarding Check-in</option>
+              <option value="Other">Other (Custom type...)</option>
+            </select>
+            {aType === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter custom appointment type..."
+                value={aCustomType}
+                onChange={(e) => setACustomType(e.target.value)}
+                style={{ marginTop: '6px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <div className="form-label">Initial Status</div>
+            <select value={aStatus} onChange={(e) => setAStatus(e.target.value)}>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Pending">Pending</option>
+              <option value="Other">Other (Custom status...)</option>
+            </select>
+            {aStatus === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter custom status..."
+                value={aCustomStatus}
+                onChange={(e) => setACustomStatus(e.target.value)}
+                style={{ marginTop: '6px' }}
+              />
+            )}
           </div>
         </div>
       </Modal>
@@ -332,13 +594,17 @@ export const GlobalModals: React.FC = () => {
         onClose={closeModal}
         onSave={() => {
           if (!autoName) return;
+          const finalTrig = autoTrig === 'Other' ? autoCustomTrig.trim() || 'Trigger' : autoTrig;
+          const finalAct = autoAct === 'Other' ? autoCustomAct.trim() || 'Action' : autoAct;
           addAutomation({
             name: autoName,
-            trigger: autoTrig,
-            action: autoAct,
+            trigger: finalTrig,
+            action: finalAct,
             icon: 'ti-bolt',
           });
           setAutoName('');
+          setAutoCustomTrig('');
+          setAutoCustomAct('');
           closeModal();
         }}
       >
@@ -354,7 +620,17 @@ export const GlobalModals: React.FC = () => {
             <option value="Deal moved to Won">Deal moved to Won</option>
             <option value="No activity for 7 days">No activity for 7 days</option>
             <option value="Invoice overdue 3 days">Invoice overdue 3 days</option>
+            <option value="Other">Other (Custom trigger...)</option>
           </select>
+          {autoTrig === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter custom automation trigger..."
+              value={autoCustomTrig}
+              onChange={(e) => setAutoCustomTrig(e.target.value)}
+              style={{ marginTop: '6px' }}
+            />
+          )}
         </div>
         <div className="form-group">
           <div className="form-label">Action (do this...)</div>
@@ -364,7 +640,17 @@ export const GlobalModals: React.FC = () => {
             <option value="Create follow-up task">Create follow-up task</option>
             <option value="Send internal notification">Send internal notification</option>
             <option value="Send payment reminder email">Send payment reminder email</option>
+            <option value="Other">Other (Custom action...)</option>
           </select>
+          {autoAct === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter custom automation action..."
+              value={autoCustomAct}
+              onChange={(e) => setAutoCustomAct(e.target.value)}
+              style={{ marginTop: '6px' }}
+            />
+          )}
         </div>
       </Modal>
 
@@ -408,11 +694,13 @@ export const GlobalModals: React.FC = () => {
         saveLabel="Create campaign"
         onSave={() => {
           if (!campName) return;
+          const finalAud = campAud === 'Other' ? campCustomAud.trim() || 'Audience' : campAud;
           addCampaign({
             name: campName,
             date: campDate || 'Scheduled',
           });
           setCampName('');
+          setCampCustomAud('');
           closeModal();
         }}
       >
@@ -428,7 +716,17 @@ export const GlobalModals: React.FC = () => {
                 {t.name}
               </option>
             ))}
+            <option value="Other">Other (Custom template...)</option>
           </select>
+          {campTpl === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter custom template name..."
+              value={campCustomTpl}
+              onChange={(e) => setCampCustomTpl(e.target.value)}
+              style={{ marginTop: '6px' }}
+            />
+          )}
         </div>
         <div className="form-group">
           <div className="form-label">Audience</div>
@@ -436,7 +734,17 @@ export const GlobalModals: React.FC = () => {
             <option value="All contacts">All contacts</option>
             <option value="Leads only">Leads only</option>
             <option value="Active clients">Active clients</option>
+            <option value="Other">Other (Custom segment...)</option>
           </select>
+          {campAud === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter custom audience segment..."
+              value={campCustomAud}
+              onChange={(e) => setCampCustomAud(e.target.value)}
+              style={{ marginTop: '6px' }}
+            />
+          )}
         </div>
       </Modal>
 
@@ -520,13 +828,15 @@ export const GlobalModals: React.FC = () => {
         onClose={closeModal}
         onSave={() => {
           if (!uName) return;
+          const finalRole = uRole === 'Other' ? uCustomRole.trim() || 'Agent' : uRole;
           addUser({
             name: uName,
             email: uEmail || '—',
-            role: uRole,
+            role: finalRole as any,
           });
           setUName('');
           setUEmail('');
+          setUCustomRole('');
           closeModal();
         }}
       >
@@ -542,11 +852,21 @@ export const GlobalModals: React.FC = () => {
         </div>
         <div className="form-group">
           <div className="form-label">Role</div>
-          <select value={uRole} onChange={(e) => setURole(e.target.value as any)}>
+          <select value={uRole} onChange={(e) => setURole(e.target.value)}>
             <option value="Agent">Agent</option>
             <option value="Manager">Manager</option>
             <option value="Admin">Admin</option>
+            <option value="Other">Other (Custom role...)</option>
           </select>
+          {uRole === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter custom role title..."
+              value={uCustomRole}
+              onChange={(e) => setUCustomRole(e.target.value)}
+              style={{ marginTop: '6px' }}
+            />
+          )}
         </div>
       </Modal>
     </>

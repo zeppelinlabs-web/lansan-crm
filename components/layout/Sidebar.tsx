@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCRM } from '@/components/providers/CRMProvider';
+import { Logo } from '@/components/ui/Logo';
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -23,10 +24,11 @@ export const Sidebar: React.FC = () => {
       ],
     },
     {
-      title: 'Growth',
+      title: 'Growth & Booking',
       items: [
         { href: '/leads', label: 'Lead generation', iconClass: 'ti ti-target' },
         { href: '/appointments', label: 'Appointments', iconClass: 'ti ti-calendar-event', badge: pendingApptCount },
+        { href: '/book', label: 'Public Booking Page', iconClass: 'ti ti-calendar-time' },
       ],
     },
     {
@@ -42,19 +44,14 @@ export const Sidebar: React.FC = () => {
       items: [
         { href: '/payments', label: 'Payments', iconClass: 'ti ti-credit-card' },
         { href: '/invoices', label: 'Invoices', iconClass: 'ti ti-file-invoice' },
-      ],
-    },
-    {
-      title: 'Insights',
-      items: [
         { href: '/reports', label: 'Reports', iconClass: 'ti ti-chart-line' },
       ],
     },
     {
-      title: 'Tools',
+      title: 'Tools & Web',
       items: [
+        { href: '/website', label: 'Landing Page Builder', iconClass: 'ti ti-world' },
         { href: '/import', label: 'Import data', iconClass: 'ti ti-database-import' },
-        { href: '/website', label: 'Website builder', iconClass: 'ti ti-world' },
         { href: '/ai', label: 'AI assistant', iconClass: 'ti ti-sparkles' },
       ],
     },
@@ -75,13 +72,12 @@ export const Sidebar: React.FC = () => {
 
   return (
     <div className="sidebar">
-      <div className="logo">
-        <div className="logo-mark">L</div>
-        <div>
-          <div className="logo-name">Lansan</div>
-          <div className="logo-tag">CRM Platform</div>
-        </div>
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid #f0f0f0' }}>
+        <Link href="/dashboard" style={{ textDecoration: 'none' }}>
+          <Logo size="md" />
+        </Link>
       </div>
+
       <div className="nav">
         {navSections.map((section) => (
           <div key={section.title}>
@@ -97,22 +93,13 @@ export const Sidebar: React.FC = () => {
                   <i className={item.iconClass}></i>
                   <span>{item.label}</span>
                   {item.badge !== undefined && item.badge > 0 && (
-                    <span className="nav-badge">{item.badge}</span>
+                    <span className="badge">{item.badge}</span>
                   )}
                 </Link>
               );
             })}
           </div>
         ))}
-      </div>
-      <div className="sidebar-footer">
-        <div className="user-row">
-          <div className="avatar-sm">LA</div>
-          <div>
-            <div className="user-name">LaToya</div>
-            <div className="user-role">Admin · Lansan</div>
-          </div>
-        </div>
       </div>
     </div>
   );
