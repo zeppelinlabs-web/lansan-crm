@@ -138,17 +138,21 @@ export interface PaymentTransaction {
 export interface Invoice {
   id: string;
   client: string;
+  contactId?: number; // Link to contact record
+  email?: string; // Email to send invoice to
   desc: string;
   amount: number;
   due: string;
   status: 'Paid' | 'Overdue' | 'Pending' | 'Cancelled';
   assignedToId?: number;
+  dealId?: number; // Link to deal if created from deal
   /* tenantId?: string; */
 }
 
 export interface UserMember {
   id: number;
   name: string;
+  username?: string; // URL-friendly username for booking page
   email: string;
   role: 'Admin' | 'Manager' | 'Agent';
   status: 'Active' | 'Inactive';

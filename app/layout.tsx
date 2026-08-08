@@ -5,8 +5,8 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { GlobalModals } from '@/components/layout/GlobalModals';
 
 export const metadata: Metadata = {
-  title: 'Lansan CRM — The All-in-One Sales & Automation Platform',
-  description: 'Enterprise CRM for fast-growing sales teams, lead pipelines, automated campaigns, and financial management.',
+  title: 'LanSan CRM — Internal Sales Platform',
+  description: 'Internal CRM platform for LanSan team: manage leads, track pipelines, automate campaigns, and handle client invoicing.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

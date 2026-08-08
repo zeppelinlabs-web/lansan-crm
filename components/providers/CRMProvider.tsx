@@ -135,6 +135,7 @@ interface CRMContextType {
 
   prefillContact: Contact | null;
   openAddDealForContact: (contact: Contact) => void;
+  openAddInvoiceForContact: (contact: Contact) => void;
 
   selectedAppointmentDate: string;
   openAddAppointmentForDate: (dateStr: string) => void;
@@ -227,6 +228,11 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const openAddDealForContact = (contact: Contact) => {
     setPrefillContact(contact);
     setActiveModal('addDeal');
+  };
+
+  const openAddInvoiceForContact = (contact: Contact) => {
+    setPrefillContact(contact);
+    setActiveModal('addInvoice');
   };
 
   const openAddAppointmentForDate = (dateStr: string) => {
@@ -864,6 +870,7 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         closeModal,
         prefillContact,
         openAddDealForContact,
+        openAddInvoiceForContact,
         selectedAppointmentDate,
         openAddAppointmentForDate,
         showToast,

@@ -6,12 +6,17 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Card } from '@/components/ui/Card';
 import { Pill } from '@/components/ui/Pill';
 import { Button } from '@/components/ui/Button';
+import { IconForms, IconPlus, IconExternalLink } from '@tabler/icons-react';
 
 export default function LeadGenPage() {
-  const { leads, moveLead, convertLeadToDeal, deleteLead, searchQuery } = useCRM();
+  const { leads, moveLead, convertLeadToDeal, deleteLead, searchQuery, integrations, showToast } = useCRM();
   const [selectedSource, setSelectedSource] = useState<string>('All');
   const [draggedLeadId, setDraggedLeadId] = useState<number | null>(null);
   const [dragOverCategory, setDragOverCategory] = useState<string | null>(null);
+
+  // Check if Typeform is connected
+  const typeformIntegration = integrations.find(i => i.name === 'Typeform');
+  const isTypeformConnected = typeformIntegration?.connected || false;
 
   const sources = ['All', 'Website', 'Referral', 'LinkedIn', 'Cold outreach', 'Import', 'Ad campaign', 'Direct'];
 
@@ -53,6 +58,38 @@ export default function LeadGenPage() {
 
   return (
     <div>
+      {/* Typeform Integration Banner */}
+      {!isTypeformConnected && (
+        <div style={{ 
+          background: '#f0fdf9', 
+          border: '1px solid #6ee7b7', 
+          borderRadius: '12px', 
+          padding: '14px 18px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <IconForms size={28} color="#0F6E56" />
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#064e3b', marginBottom: '2px' }}>
+                Auto-capture Leads from Typeform
+              </div>
+              <div style={{ fontSize: '12px', color: '#059669' }}>
+                Connect Typeform to automatically create leads when someone submits your forms.
+              </div>
+            </div>
+          </div>
+          <a href="/integrations">
+            <Button variant="primary" size="sm" icon={<IconForms size={16} />}>
+              Connect Typeform
+            </Button>
+          </a>
+        </div>
+      )}
+
       <div className="stats-row">
         <StatCard label="Total leads" value={leads.length} sub="Active prospects" />
         <StatCard label="Hot leads" value={hotCount} sub="High purchase intent" />

@@ -74,7 +74,7 @@ export const GlobalModals: React.FC = () => {
   const [aTime, setATime] = useState('09:00 AM');
   const [aCustomTime, setACustomTime] = useState('');
   const [aDate, setADate] = useState('2026-06-08');
-  const [aType, setAType] = useState('Product Demo');
+  const [aType, setAType] = useState('Team Meeting');
   const [aCustomType, setACustomType] = useState('');
   const [aStatus, setAStatus] = useState<string>('Confirmed');
   const [aCustomStatus, setACustomStatus] = useState('');
@@ -111,6 +111,8 @@ export const GlobalModals: React.FC = () => {
   // Invoice Form State
   const [invId, setInvId] = useState('INV-005');
   const [invClient, setInvClient] = useState('');
+  const [invContactId, setInvContactId] = useState<string>('');
+  const [invEmail, setInvEmail] = useState('');
   const [invAmount, setInvAmount] = useState('');
   const [invDesc, setInvDesc] = useState('');
   const [invDue, setInvDue] = useState('');
@@ -123,6 +125,26 @@ export const GlobalModals: React.FC = () => {
     }
   }, [invoices, activeModal]);
 
+  // Auto-populate email when contact is selected for invoice
+  React.useEffect(() => {
+    if (invContactId && contacts.length > 0) {
+      const contact = contacts.find(c => String(c.id) === invContactId);
+      if (contact) {
+        setInvClient(contact.company);
+        setInvEmail(contact.email !== '—' ? contact.email : '');
+      }
+    }
+  }, [invContactId, contacts]);
+
+  // Prefill invoice when opened from contact page
+  React.useEffect(() => {
+    if (prefillContact && activeModal === 'addInvoice') {
+      setInvContactId(String(prefillContact.id));
+      setInvClient(prefillContact.company);
+      setInvEmail(prefillContact.email !== '—' ? prefillContact.email : '');
+    }
+  }, [prefillContact, activeModal]);
+
   // Charge Client State
   const [chClient, setChClient] = useState('');
   const [chAmount, setChAmount] = useState('');
@@ -130,6 +152,7 @@ export const GlobalModals: React.FC = () => {
 
   // User Form State
   const [uName, setUName] = useState('');
+  const [uUsername, setUUsername] = useState('');
   const [uEmail, setUEmail] = useState('');
   const [uRole, setURole] = useState<string>('Agent');
   const [uCustomRole, setUCustomRole] = useState('');
@@ -560,7 +583,7 @@ export const GlobalModals: React.FC = () => {
             <div className="form-label">Appointment Type</div>
             <select value={aType} onChange={(e) => setAType(e.target.value)}>
               <option value="Video call">Video call</option>
-              <option value="Product Demo">Product Demo</option>
+              <option value="Team Meeting">Team Meeting</option>
               <option value="Discovery">Discovery</option>
               <option value="Sales Call">Sales Call</option>
               <option value="Contract Review">Contract Review</option>
@@ -765,16 +788,27 @@ export const GlobalModals: React.FC = () => {
         onClose={closeModal}
         saveLabel="Create & send invoice"
         onSave={() => {
-          if (!invClient) return;
+          if (!invClient) {
+            showToast('Please select a contact or enter a client name.', 'error');
+            return;
+          }
+          if (!invEmail) {
+            showToast('Please enter an email address to send the invoice.', 'error');
+            return;
+          }
           addInvoice({
             id: invId,
             client: invClient,
+            contactId: invContactId ? parseInt(invContactId) : undefined,
+            email: invEmail,
             desc: invDesc || 'Services rendered',
             amount: parseInt(invAmount) || 0,
             due: invDue || 'TBD',
             status: invStatus,
           });
           setInvClient('');
+          setInvContactId('');
+          setInvEmail('');
           setInvAmount('');
           setInvDesc('');
           closeModal();
@@ -800,24 +834,71 @@ export const GlobalModals: React.FC = () => {
           </div>
         </div>
 
+        <div className="form-group">
+          <div className="form-label">Select contact (optional)</div>
+          <select 
+            value={invContactId} 
+            onChange={(e) => setInvContactId(e.target.value)}
+          >
+            <option value="">-- Select a contact --</option>
+            {contacts.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} ({c.company})
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
-            <div className="form-label">Client name</div>
-            <input type="text" placeholder="Acme Corp" value={invClient} onChange={(e) => setInvClient(e.target.value)} list="company-list-options" />
+            <div className="form-label">Client / Company name</div>
+            <input 
+              type="text" 
+              placeholder="Acme Corp" 
+              value={invClient} 
+              onChange={(e) => setInvClient(e.target.value)} 
+            />
           </div>
+          <div className="form-group">
+            <div className="form-label">Email address *</div>
+            <input 
+              type="email" 
+              placeholder="billing@acme.com" 
+              value={invEmail} 
+              onChange={(e) => setInvEmail(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div className="form-group">
             <div className="form-label">Amount ($)</div>
             <input type="number" placeholder="5000" value={invAmount} onChange={(e) => setInvAmount(e.target.value)} />
           </div>
+          <div className="form-group">
+            <div className="form-label">Due date</div>
+            <input type="date" value={invDue} onChange={(e) => setInvDue(e.target.value)} />
+          </div>
         </div>
+
         <div className="form-group">
           <div className="form-label">Description</div>
           <input type="text" placeholder="Services rendered — June 2026" value={invDesc} onChange={(e) => setInvDesc(e.target.value)} />
         </div>
-        <div className="form-group">
-          <div className="form-label">Due date</div>
-          <input type="date" value={invDue} onChange={(e) => setInvDue(e.target.value)} />
-        </div>
+
+        {invContactId && (
+          <div style={{ 
+            padding: '10px', 
+            background: '#f0f9ff', 
+            border: '1px solid #bae6fd', 
+            borderRadius: '6px',
+            fontSize: '13px',
+            color: '#0c4a6e'
+          }}>
+            ℹ️ This invoice will be linked to the selected contact record
+          </div>
+        )}
       </Modal>
 
       {/* Charge Client Modal */}
@@ -863,10 +944,12 @@ export const GlobalModals: React.FC = () => {
           const finalRole = uRole === 'Other' ? uCustomRole.trim() || 'Agent' : uRole;
           addUser({
             name: uName,
+            username: uUsername || uName.toLowerCase().replace(/\s+/g, '-'),
             email: uEmail || '—',
             role: finalRole as any,
           });
           setUName('');
+          setUUsername('');
           setUEmail('');
           setUCustomRole('');
           closeModal();
@@ -878,28 +961,54 @@ export const GlobalModals: React.FC = () => {
             <input type="text" placeholder="John Smith" value={uName} onChange={(e) => setUName(e.target.value)} />
           </div>
           <div className="form-group">
+            <div className="form-label">Username (for booking page)</div>
+            <input 
+              type="text" 
+              placeholder="john-smith" 
+              value={uUsername} 
+              onChange={(e) => setUUsername(e.target.value)}
+            />
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div className="form-group">
             <div className="form-label">Email</div>
             <input type="email" placeholder="john@lansan.com" value={uEmail} onChange={(e) => setUEmail(e.target.value)} />
           </div>
+          <div className="form-group">
+            <div className="form-label">Role</div>
+            <select value={uRole} onChange={(e) => setURole(e.target.value)}>
+              <option value="Agent">Agent</option>
+              <option value="Manager">Manager</option>
+              <option value="Admin">Admin</option>
+              <option value="Other">Other (Custom role...)</option>
+            </select>
+          </div>
         </div>
-        <div className="form-group">
-          <div className="form-label">Role</div>
-          <select value={uRole} onChange={(e) => setURole(e.target.value)}>
-            <option value="Agent">Agent</option>
-            <option value="Manager">Manager</option>
-            <option value="Admin">Admin</option>
-            <option value="Other">Other (Custom role...)</option>
-          </select>
-          {uRole === 'Other' && (
+        {uRole === 'Other' && (
+          <div className="form-group">
+            <div className="form-label">Custom role title</div>
             <input
               type="text"
               placeholder="Enter custom role title..."
               value={uCustomRole}
               onChange={(e) => setUCustomRole(e.target.value)}
-              style={{ marginTop: '6px' }}
             />
-          )}
-        </div>
+          </div>
+        )}
+        {uUsername && (
+          <div style={{ 
+            padding: '10px', 
+            background: '#f0f9ff', 
+            border: '1px solid #bae6fd', 
+            borderRadius: '6px',
+            fontSize: '12px',
+            color: '#0c4a6e',
+            marginTop: '10px'
+          }}>
+            📅 Booking page will be: <strong>/book/{uUsername}</strong>
+          </div>
+        )}
       </Modal>
     </>
   );

@@ -31,7 +31,7 @@ export const Sidebar: React.FC = () => {
           items: [
             { href: '/leads', label: 'My Leads', iconClass: 'ti ti-target' },
             { href: '/appointments', label: 'Appointments', iconClass: 'ti ti-calendar-event', badge: pendingApptCount },
-            { href: '/book', label: 'Public Booking Page', iconClass: 'ti ti-calendar-time' },
+            { href: '/book/' + (currentUser.username || 'latoya'), label: 'My Booking Page', iconClass: 'ti ti-calendar-time' },
           ],
         },
         {
@@ -61,7 +61,7 @@ export const Sidebar: React.FC = () => {
           items: [
             { href: '/leads', label: 'Lead Generation', iconClass: 'ti ti-target' },
             { href: '/appointments', label: 'Appointments', iconClass: 'ti ti-calendar-event', badge: pendingApptCount },
-            { href: '/book', label: 'Public Booking Page', iconClass: 'ti ti-calendar-time' },
+            { href: '/book/' + (currentUser.username || 'latoya'), label: 'My Booking Page', iconClass: 'ti ti-calendar-time' },
           ],
         },
         {
@@ -102,7 +102,7 @@ export const Sidebar: React.FC = () => {
         items: [
           { href: '/leads', label: 'Lead Generation', iconClass: 'ti ti-target' },
           { href: '/appointments', label: 'Appointments', iconClass: 'ti ti-calendar-event', badge: pendingApptCount },
-          { href: '/book', label: 'Public Booking Page', iconClass: 'ti ti-calendar-time' },
+          { href: '/book/' + (currentUser.username || 'latoya'), label: 'My Booking Page', iconClass: 'ti ti-calendar-time' },
         ],
       },
       {
@@ -150,18 +150,18 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="sidebar" style={{ width: '240px', maxWidth: '240px', overflowX: 'hidden', boxSizing: 'border-box' }}>
+    <div className="sidebar" style={{ width: '210px', maxWidth: '210px', overflowX: 'hidden', boxSizing: 'border-box' }}>
       {/* Brand Header */}
-      <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', overflow: 'hidden' }}>
+      <div style={{ padding: '16px', borderBottom: '1px solid #e8e8e8', overflow: 'hidden' }}>
         <Link href="/dashboard" style={{ textDecoration: 'none', display: 'block' }}>
           <Logo size="md" />
         </Link>
       </div>
 
       {/* Role Badge Indicator */}
-      <div style={{ padding: '10px 14px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '6px', boxSizing: 'border-box', overflow: 'hidden' }}>
+      <div style={{ padding: '10px 12px', background: '#fafafa', borderBottom: '1px solid #e8e8e8', display: 'flex', alignItems: 'center', gap: '6px', boxSizing: 'border-box', overflow: 'hidden' }}>
         <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: currentUser.avatarColor || '#1D9E75', flexShrink: 0 }} />
-        <span style={{ fontSize: '11px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <span style={{ fontSize: '10px', fontWeight: 600, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {currentUser.role} Navigation
         </span>
       </div>
@@ -170,7 +170,7 @@ export const Sidebar: React.FC = () => {
       <div className="nav" style={{ padding: '6px', overflowX: 'hidden' }}>
         {navSections.map((section) => (
           <div key={section.title} style={{ marginBottom: '8px' }}>
-            <div className="nav-section" style={{ padding: '8px 8px 3px', fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div className="nav-section" style={{ padding: '10px 8px 3px', fontSize: '10px', fontWeight: 600, color: '#aaaaaa', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               {section.title}
             </div>
             {section.items.map((item) => {
@@ -184,23 +184,24 @@ export const Sidebar: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    padding: '7px 10px',
+                    padding: '7px 9px',
                     borderRadius: '8px',
                     fontSize: '13px',
-                    color: active ? '#0F6E56' : '#475569',
+                    color: active ? '#0F6E56' : '#555555',
                     background: active ? '#e8f8f2' : 'transparent',
-                    fontWeight: active ? 700 : 500,
+                    fontWeight: active ? 600 : 500,
                     textDecoration: 'none',
                     overflow: 'hidden',
                     whiteSpace: 'nowrap',
                     textOverflow: 'ellipsis',
-                    marginBottom: '2px',
+                    marginBottom: '1px',
+                    transition: 'background 0.12s, color 0.12s',
                   }}
                 >
                   <i className={item.iconClass} style={{ fontSize: '16px', flexShrink: 0 }} />
                   <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
                   {item.badge !== undefined && item.badge > 0 && (
-                    <span className="badge" style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '10px', background: '#dbeafe', color: '#1d4ed8', fontWeight: 700, flexShrink: 0 }}>
+                    <span className="nav-badge" style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '10px', background: '#dbeafe', color: '#1d4ed8', fontWeight: 600, flexShrink: 0, marginLeft: 'auto' }}>
                       {item.badge}
                     </span>
                   )}
@@ -212,46 +213,42 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Active User Footer Card */}
-      <div style={{ padding: '10px 12px', margin: '10px 8px', background: '#f1f5f9', borderRadius: '8px', overflow: 'hidden', boxSizing: 'border-box' }}>
+      <div style={{ padding: '12px', borderTop: '1px solid #e8e8e8' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: currentUser.avatarColor || '#1D9E75', color: '#fff', fontWeight: 800, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: currentUser.avatarColor || '#e8f8f2', color: '#0F6E56', fontWeight: 700, fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {currentUser.name.charAt(0)}
           </div>
           <div style={{ overflow: 'hidden', flex: 1 }}>
-            <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.name}</div>
-            <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>{currentUser.role} Account</div>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#111111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.name}</div>
+            <div style={{ fontSize: '10px', color: '#888888', fontWeight: 500 }}>{currentUser.role}</div>
           </div>
         </div>
         <Link
           href="/login"
           style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '6px',
-            padding: '6px 10px',
-            background: '#fff',
-            border: '1px solid #e2e8f0',
-            borderRadius: '6px',
-            fontSize: '11px',
-            fontWeight: 700,
-            color: '#64748b',
+            gap: '5px',
+            padding: '4px 7px',
+            background: 'transparent',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: '#c0392b',
             textDecoration: 'none',
-            transition: 'all 0.15s ease',
+            transition: 'all 0.12s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#fee2e2';
-            e.currentTarget.style.borderColor = '#fca5a5';
-            e.currentTarget.style.color = '#dc2626';
+            e.currentTarget.style.background = '#fef2f2';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#fff';
-            e.currentTarget.style.borderColor = '#e2e8f0';
-            e.currentTarget.style.color = '#64748b';
+            e.currentTarget.style.background = 'transparent';
           }}
         >
           <i className="ti ti-logout" style={{ fontSize: '14px' }} />
-          <span>Sign Out</span>
+          <span>Sign out</span>
         </Link>
       </div>
     </div>

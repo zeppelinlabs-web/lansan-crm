@@ -15,6 +15,7 @@ export default function ContactsPage() {
     updateContactStatus,
     openModal,
     openAddDealForContact,
+    openAddInvoiceForContact,
     searchQuery,
   } = useCRM();
 
@@ -178,6 +179,15 @@ export default function ContactsPage() {
                       >
                         <i className="ti ti-chart-bar" style={{ marginRight: '4px' }}></i>
                         Add Deal
+                      </Button>
+
+                      <Button
+                        variant="sm"
+                        onClick={() => openAddInvoiceForContact(c)}
+                        title={`Create invoice for ${c.name} (${c.company})`}
+                      >
+                        <i className="ti ti-file-invoice" style={{ marginRight: '4px' }}></i>
+                        Invoice
                       </Button>
 
                       <Button

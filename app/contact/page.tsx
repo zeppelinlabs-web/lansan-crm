@@ -30,7 +30,7 @@ export default function PublicContactPage() {
       return;
     }
     setSubmitted(true);
-    showToast(`📩 Thank you, ${name}! Your inquiry has been sent to Lansan Connect Support.`);
+    showToast(`📩 Thank you, ${name}! Your inquiry has been sent to the LanSan team.`);
   };
 
   return (
@@ -66,7 +66,7 @@ export default function PublicContactPage() {
               Contact
             </Link>
             <Link href="/book" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-              Book Demo
+              Book Meeting
             </Link>
           </nav>
 
@@ -92,10 +92,10 @@ export default function PublicContactPage() {
             <IconMail size={16} /> Get In Touch
           </div>
           <h1 style={{ fontSize: '42px', fontWeight: 900, color: '#ffffff', marginBottom: '16px' }}>
-            Contact Lansan Connect Support
+            Contact LanSan Team
           </h1>
           <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '600px', margin: '0 auto' }}>
-            Have questions about CRM feature deployment, user role licenses, or API integrations? We&apos;re here to help.
+            Have questions about our CRM features, user access, or need technical support? We're here to help.
           </p>
         </div>
 
@@ -111,7 +111,7 @@ export default function PublicContactPage() {
                 <IconCheck size={40} style={{ marginBottom: '12px' }} />
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>Inquiry Submitted!</h3>
                 <p style={{ fontSize: '14px', color: '#cbd5e1' }}>
-                  Thank you, <strong>{name}</strong>. A Lansan Connect representative will get back to you shortly at <strong>{email}</strong>.
+                  Thank you, <strong>{name}</strong>. A LanSan team member will get back to you shortly at <strong>{email}</strong>.
                 </p>
               </div>
             ) : (
@@ -137,7 +137,7 @@ export default function PublicContactPage() {
                   <input
                     type="email"
                     required
-                    placeholder="support@lansanconnect.com"
+                    placeholder="support@lansan.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.04)', color: '#ffffff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
@@ -208,7 +208,7 @@ export default function PublicContactPage() {
                   </div>
                   <div>
                     <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Email Support</div>
-                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', fontFamily: 'monospace' }}>support@lansanconnect.com</div>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', fontFamily: 'monospace' }}>support@lansan.com</div>
                   </div>
                 </div>
 
@@ -228,7 +228,7 @@ export default function PublicContactPage() {
                   </div>
                   <div>
                     <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Corporate Headquarters</div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#cbd5e1' }}>100 Lansan Plaza, Suite 400<br />New York, NY 10001</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#cbd5e1' }}>100 LanSan Plaza, Suite 400<br />New York, NY 10001</div>
                   </div>
                 </div>
               </div>
@@ -237,13 +237,13 @@ export default function PublicContactPage() {
             {/* Quick Link Card */}
             <div style={{ background: 'linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%)', borderRadius: '20px', padding: '32px', color: '#ffffff', boxShadow: '0 8px 24px rgba(29, 158, 117, 0.3)' }}>
               <IconCalendar size={32} style={{ marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Need a Live Product Demo?</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Schedule a Meeting with Our Team</h3>
               <p style={{ fontSize: '14px', color: '#e8f8f2', lineHeight: 1.5, marginBottom: '20px' }}>
-                Schedule a 1-on-1 discovery meeting with our sales executive team directly on our calendar.
+                Book a time to meet with a LanSan team member directly on their calendar.
               </p>
               <Link href="/book">
                 <button style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#ffffff', color: '#0F6E56', fontSize: '14px', fontWeight: 800, cursor: 'pointer' }}>
-                  Book Demo Now &rarr;
+                  View Team Calendar &rarr;
                 </button>
               </Link>
             </div>
@@ -254,11 +254,11 @@ export default function PublicContactPage() {
       {/* Public Footer */}
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: '40px 24px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          <div>&copy; {new Date().getFullYear()} Lansan CRM Inc. Single Company Platform.</div>
+          <div>&copy; {new Date().getFullYear()} LanSan Company. Internal CRM Platform.</div>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Sign In</Link>
+            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Team Sign In</Link>
             <Link href="/about" style={{ color: '#94a3b8', textDecoration: 'none' }}>About Us</Link>
-            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Open App &rarr;</Link>
+            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Launch CRM &rarr;</Link>
           </div>
         </div>
       </footer>

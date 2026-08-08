@@ -5,11 +5,15 @@ import { useCRM } from '@/components/providers/CRMProvider';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Pill } from '@/components/ui/Pill';
-import { IconCopy, IconCheck, IconCalendarEvent, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { IconCopy, IconCheck, IconCalendarEvent, IconChevronLeft, IconChevronRight, IconBrandGoogle, IconRefresh } from '@tabler/icons-react';
 
 export default function AppointmentsPage() {
-  const { appointments, openModal, openAddAppointmentForDate, searchQuery } = useCRM();
+  const { appointments, openModal, openAddAppointmentForDate, searchQuery, integrations, showToast } = useCRM();
   const [copied, setCopied] = useState(false);
+
+  // Check if Google Calendar is connected
+  const googleCalendarIntegration = integrations.find(i => i.name === 'Google Calendar');
+  const isGoogleCalendarConnected = googleCalendarIntegration?.connected || false;
 
   // Calendar State: Default to June 2026
   const [viewYear, setViewYear] = useState<number>(2026);
@@ -122,6 +126,68 @@ export default function AppointmentsPage() {
 
   return (
     <div>
+      {/* Google Calendar Sync Banner */}
+      {!isGoogleCalendarConnected && (
+        <div style={{ 
+          background: '#fef3c7', 
+          border: '1px solid #fde68a', 
+          borderRadius: '12px', 
+          padding: '14px 18px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <IconBrandGoogle size={28} color="#d97706" />
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#92400e', marginBottom: '2px' }}>
+                Sync with Google Calendar
+              </div>
+              <div style={{ fontSize: '12px', color: '#d97706' }}>
+                Two-way sync keeps your CRM appointments and Google Calendar in perfect sync.
+              </div>
+            </div>
+          </div>
+          <a href="/integrations">
+            <Button variant="primary" size="sm" icon={<IconBrandGoogle size={16} />}>
+              Connect Calendar
+            </Button>
+          </a>
+        </div>
+      )}
+
+      {/* Sync Status Indicator (if connected) */}
+      {isGoogleCalendarConnected && (
+        <div style={{ 
+          background: '#e8f8f2', 
+          border: '1px solid #6ee7b7', 
+          borderRadius: '12px', 
+          padding: '10px 14px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          fontSize: '13px',
+          color: '#064e3b'
+        }}>
+          <IconCheck size={18} color="#0F6E56" />
+          <span style={{ fontWeight: 600 }}>Google Calendar synced</span>
+          <span style={{ marginLeft: 'auto', fontSize: '11px', color: '#059669' }}>
+            Last sync: 2 minutes ago
+          </span>
+          <Button 
+            variant="default" 
+            size="sm" 
+            icon={<IconRefresh size={14} />}
+            onClick={() => showToast('Syncing appointments...', 'info')}
+          >
+            Sync Now
+          </Button>
+        </div>
+      )}
+
       {/* Public Booking Link Banner */}
       <div className="card booking-link-box" style={{ marginBottom: '16px' }}>
         <IconCalendarEvent size={20} color="#0F6E56" />

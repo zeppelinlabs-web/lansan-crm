@@ -48,7 +48,7 @@ export default function PublicAboutPage() {
               Contact
             </Link>
             <Link href="/book" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-              Book Demo
+              Book Meeting
             </Link>
           </nav>
 
@@ -74,10 +74,10 @@ export default function PublicAboutPage() {
             <IconBuilding size={16} /> Corporate Profile &amp; Platform Mission
           </div>
           <h1 style={{ fontSize: '48px', fontWeight: 900, color: '#ffffff', lineHeight: 1.2, marginBottom: '20px' }}>
-            Empowering Lansan Connect Sales Excellence
+            About LanSan's Internal CRM System
           </h1>
           <p style={{ fontSize: '17px', color: '#94a3b8', lineHeight: 1.6 }}>
-            Lansan CRM is the dedicated enterprise sales management system engineered for high-velocity revenue growth, role-isolated account management, and automated client invoicing.
+            LanSan CRM is our dedicated internal sales management system, purpose-built for our team's high-velocity growth, role-based account management, and automated client workflows.
           </p>
         </div>
       </section>
@@ -86,10 +86,10 @@ export default function PublicAboutPage() {
       <section style={{ padding: '60px 24px 80px 24px', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <h2 style={{ fontSize: '32px', fontWeight: 900, color: '#ffffff', marginBottom: '12px' }}>
-            Sales Executive &amp; Management Leadership
+            Our Team Leadership
           </h2>
           <p style={{ fontSize: '15px', color: '#94a3b8' }}>
-            Role-isolated access ensures each team member operates with complete clarity and focused tools.
+            Meet the LanSan team members using this internal CRM platform daily.
           </p>
         </div>
 
@@ -98,23 +98,23 @@ export default function PublicAboutPage() {
             {
               name: 'LaToya',
               role: 'System Administrator & Executive',
-              email: 'latoya@lansanconnect.com',
+              email: 'latoya@lansan.com',
               avatarColor: '#1D9E75',
-              desc: 'Oversees global company operations, financial invoicing revenue, system-wide integrations, and administrative governance.',
+              desc: 'Oversees company operations, manages financial invoicing, handles system integrations, and maintains administrative governance.',
             },
             {
               name: 'James Wilson',
               role: 'Sales Manager',
-              email: 'j.wilson@lansanconnect.com',
+              email: 'j.wilson@lansan.com',
               avatarColor: '#0284c7',
-              desc: 'Manages sales team performance, pipeline stage funnels, rep deal assignments, and quarterly revenue target tracking.',
+              desc: 'Manages sales team performance, oversees pipeline stages, assigns deals to reps, and tracks quarterly revenue targets.',
             },
             {
               name: 'Sofia Rodriguez',
               role: 'Senior Sales Agent',
-              email: 's.rodriguez@lansanconnect.com',
+              email: 's.rodriguez@lansan.com',
               avatarColor: '#7c3aed',
-              desc: 'Drives direct client acquisition, lead follow-ups, daily appointment scheduling, and personal pipeline closing.',
+              desc: 'Drives client acquisition, follows up on leads, schedules appointments, and closes deals in personal pipeline.',
             },
           ].map((leader, i) => (
             <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '32px', textAlign: 'center' }}>
@@ -162,11 +162,11 @@ export default function PublicAboutPage() {
       {/* Public Footer */}
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: '40px 24px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          <div>&copy; {new Date().getFullYear()} Lansan CRM Inc. Single Company Platform.</div>
+          <div>&copy; {new Date().getFullYear()} LanSan Company. Internal CRM Platform.</div>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Sign In</Link>
-            <Link href="/contact" style={{ color: '#94a3b8', textDecoration: 'none' }}>Contact Support</Link>
-            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Open App &rarr;</Link>
+            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Team Sign In</Link>
+            <Link href="/contact" style={{ color: '#94a3b8', textDecoration: 'none' }}>Contact</Link>
+            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Launch CRM &rarr;</Link>
           </div>
         </div>
       </footer>

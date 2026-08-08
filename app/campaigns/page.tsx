@@ -4,17 +4,61 @@ import React from 'react';
 import { useCRM } from '@/components/providers/CRMProvider';
 import { Pill } from '@/components/ui/Pill';
 import { Button } from '@/components/ui/Button';
-import { IconSend, IconTrash } from '@tabler/icons-react';
+import { IconSend, IconTrash, IconBrandGmail, IconAlertCircle } from '@tabler/icons-react';
 
 export default function CampaignsPage() {
-  const { campaigns, sendCampaign, deleteCampaign, searchQuery } = useCRM();
+  const { campaigns, sendCampaign, deleteCampaign, searchQuery, integrations, showToast } = useCRM();
+
+  // Check if Gmail is connected
+  const gmailIntegration = integrations.find(i => i.name === 'Gmail');
+  const isGmailConnected = gmailIntegration?.connected || false;
 
   const filteredCampaigns = campaigns.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleSendCampaign = (campId: number) => {
+    if (!isGmailConnected) {
+      showToast('Please connect Gmail in Integrations to send campaigns.', 'error');
+      return;
+    }
+    sendCampaign(campId);
+  };
+
   return (
     <div>
+      {/* Gmail Connection Banner (if not connected) */}
+      {!isGmailConnected && (
+        <div style={{ 
+          background: '#fee2e2', 
+          border: '1px solid #fca5a5', 
+          borderRadius: '12px', 
+          padding: '14px 18px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <IconAlertCircle size={28} color="#dc2626" />
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#991b1b', marginBottom: '2px' }}>
+                Gmail Not Connected
+              </div>
+              <div style={{ fontSize: '12px', color: '#dc2626' }}>
+                Connect your Gmail account to send email campaigns with open/click tracking.
+              </div>
+            </div>
+          </div>
+          <a href="/integrations">
+            <Button variant="primary" size="sm" icon={<IconBrandGmail size={16} />}>
+              Connect Gmail
+            </Button>
+          </a>
+        </div>
+      )}
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {filteredCampaigns.map((camp) => {
           const openRate = camp.sent > 0 ? Math.round((camp.opens / camp.sent) * 100) : 0;
@@ -34,7 +78,7 @@ export default function CampaignsPage() {
                       variant="primary"
                       className="btn-sm"
                       icon={<IconSend size={14} />}
-                      onClick={() => sendCampaign(camp.id)}
+                      onClick={() => handleSendCampaign(camp.id)}
                     >
                       Send now
                     </Button>

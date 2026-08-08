@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, use } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useCRM } from '@/components/providers/CRMProvider';
 import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
@@ -18,16 +17,14 @@ import {
   IconArrowLeft
 } from '@tabler/icons-react';
 
-function BookingPageContent() {
-  const searchParams = useSearchParams();
-  const userId = searchParams.get('user'); // URL param: /book?user=latoya
-  
+export default function UserBookingPage({ params }: { params: Promise<{ username: string }> }) {
   const { addAppointment, addContact, contacts, showToast, users, currentUser } = useCRM();
+  
+  // Unwrap the params Promise
+  const { username } = use(params);
 
-  // Determine which team member this booking page is for
-  const bookingUser = userId 
-    ? users.find(u => u.name.toLowerCase().replace(/\s+/g, '-') === userId.toLowerCase()) || currentUser
-    : currentUser;
+  // Find the team member by username
+  const bookingUser = users.find(u => u.username === username) || currentUser;
 
   // Booking Form State
   const [meetingType, setMeetingType] = useState<{
@@ -425,32 +422,5 @@ function BookingPageContent() {
         )}
       </main>
     </div>
-  );
-}
-
-
-export default function PublicBookingPage() {
-  return (
-    <Suspense fallback={
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        background: '#f8fafc'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ 
-            fontSize: '14px', 
-            color: '#64748b',
-            fontWeight: 600 
-          }}>
-            Loading booking page...
-          </div>
-        </div>
-      </div>
-    }>
-      <BookingPageContent />
-    </Suspense>
   );
 }

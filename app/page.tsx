@@ -57,7 +57,7 @@ export default function PublicLandingPage() {
               Contact
             </Link>
             <Link href="/book" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-              Book Demo
+              Book Meeting
             </Link>
           </nav>
 
@@ -146,11 +146,11 @@ export default function PublicLandingPage() {
               marginBottom: '24px',
             }}
           >
-            Close More Deals &amp; Automate Sales with <span style={{ background: 'linear-gradient(135deg, #34d399 0%, #1D9E75 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Lansan CRM</span>
+            LanSan Internal CRM System — <span style={{ background: 'linear-gradient(135deg, #34d399 0%, #1D9E75 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Our Sales Hub</span>
           </h1>
 
           <p style={{ fontSize: '18px', color: '#94a3b8', lineHeight: 1.6, marginBottom: '36px', maxWidth: '720px', margin: '0 auto 36px auto' }}>
-            The corporate sales command center for Lansan Connect. Manage lead generation, track deals pipelines, generate PDF invoices, and let AI automate customer outreach.
+            The internal sales command center for LanSan company. Our team uses this platform to manage lead generation, track deal pipelines, generate invoices, and automate customer outreach workflows.
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
@@ -198,13 +198,13 @@ export default function PublicLandingPage() {
           {/* Proof points */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginTop: '48px', color: '#64748b', fontSize: '13px', fontWeight: 600 }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <IconCheck size={16} color="#34d399" /> Role-isolated user access
+              <IconCheck size={16} color="#34d399" /> Role-based team access
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <IconCheck size={16} color="#34d399" /> Single Company Deployment
+              <IconCheck size={16} color="#34d399" /> Internal company tool
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <IconCheck size={16} color="#34d399" /> PDF Invoicing &amp; AI Copilot
+              <IconCheck size={16} color="#34d399" /> PDF Invoicing &amp; AI Assistant
             </span>
           </div>
         </div>
@@ -256,10 +256,10 @@ export default function PublicLandingPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h2 style={{ fontSize: '38px', fontWeight: 900, color: '#ffffff', marginBottom: '16px' }}>
-              Everything Your Sales Team Needs to Scale
+              Everything Our Sales Team Uses Daily
             </h2>
             <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '640px', margin: '0 auto' }}>
-              Designed to remove friction from lead acquisition, pipeline management, and client invoicing.
+              Purpose-built to streamline our team's lead acquisition, pipeline management, and client invoicing workflows.
             </p>
           </div>
 
@@ -267,38 +267,38 @@ export default function PublicLandingPage() {
             {[
               {
                 icon: <IconUsers size={28} color="#34d399" />,
-                title: 'Contacts & Account DB',
-                desc: 'Organize contacts with custom lead scores, statuses, activity timelines, and real-time lead board sync.',
+                title: 'Team Contacts Database',
+                desc: 'Organize client contacts with custom lead scores, statuses, activity timelines, and real-time sync across our team.',
                 link: '/contacts',
               },
               {
                 icon: <IconChartBar size={28} color="#60a5fa" />,
-                title: 'Deals Pipeline Kanban',
-                desc: 'Drag & drop deals across custom stages (Lead, Qualified, Proposal, Negotiation) with automated value totals.',
+                title: 'Sales Pipeline Board',
+                desc: 'Track deals across stages (Lead, Qualified, Proposal, Negotiation) with automated value totals for our team.',
                 link: '/pipeline',
               },
               {
                 icon: <IconReceipt size={28} color="#f59e0b" />,
-                title: 'Invoices & PDF Generator',
-                desc: 'Issue sequential invoices with auto-numbering, change payment statuses, and generate printable PDF documents.',
+                title: 'Invoice Generator',
+                desc: 'Issue sequential client invoices with auto-numbering, payment tracking, and PDF document generation.',
                 link: '/invoices',
               },
               {
                 icon: <IconRobot size={28} color="#a78bfa" />,
-                title: 'AI Copilot Assistant',
-                desc: 'Built-in AI Assistant trained on your CRM data to generate sales emails, answer queries, and analyze leads.',
+                title: 'AI Sales Assistant',
+                desc: 'Internal AI assistant trained on our CRM data to generate follow-up emails, answer queries, and analyze leads.',
                 link: '/ai',
               },
               {
                 icon: <IconBolt size={28} color="#f43f5e" />,
                 title: 'Workflow Automations',
-                desc: 'Trigger welcome emails, send Slack alerts, and advance pipeline deals automatically without manual work.',
+                desc: 'Trigger automated welcome emails, Slack alerts, and pipeline updates without manual work from our team.',
                 link: '/automations',
               },
               {
                 icon: <IconCalendar size={28} color="#38bdf8" />,
-                title: 'Public Booking Engine',
-                desc: 'Share public scheduling links for clients to book video calls and discovery meetings directly on your calendar.',
+                title: 'Team Booking Pages',
+                desc: 'Each team member gets a personalized booking link for clients to schedule video calls and discovery meetings.',
                 link: '/book',
               },
             ].map((f, idx) => (
@@ -342,11 +342,11 @@ export default function PublicLandingPage() {
       {/* Public Footer */}
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: '40px 24px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          <div>&copy; {new Date().getFullYear()} Lansan CRM Inc. Single Company Platform.</div>
+          <div>&copy; {new Date().getFullYear()} LanSan Company. Internal CRM Platform.</div>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Sign In</Link>
-            <Link href="/signup" style={{ color: '#94a3b8', textDecoration: 'none' }}>Register User</Link>
-            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Open App &rarr;</Link>
+            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Team Sign In</Link>
+            <Link href="/signup" style={{ color: '#94a3b8', textDecoration: 'none' }}>Register Account</Link>
+            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Launch CRM &rarr;</Link>
           </div>
         </div>
       </footer>

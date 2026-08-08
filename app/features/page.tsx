@@ -52,7 +52,7 @@ export default function PublicFeaturesPage() {
               Contact
             </Link>
             <Link href="/book" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-              Book Demo
+              Book Meeting
             </Link>
           </nav>
 
@@ -78,10 +78,10 @@ export default function PublicFeaturesPage() {
             <IconSparkles size={16} /> Enterprise Platform Capabilities
           </div>
           <h1 style={{ fontSize: '48px', fontWeight: 900, color: '#ffffff', lineHeight: 1.2, marginBottom: '20px' }}>
-            Engineered for Modern Corporate Sales Operations
+            Our Internal CRM Capabilities
           </h1>
           <p style={{ fontSize: '17px', color: '#94a3b8', lineHeight: 1.6 }}>
-            Discover how Lansan CRM unifies account tracking, visual deal pipelines, client invoicing, and AI copilot automation into one unified platform.
+            Discover how LanSan CRM unifies our team's account tracking, visual deal pipelines, client invoicing, and AI automation into one platform.
           </p>
         </div>
       </section>
@@ -213,11 +213,11 @@ export default function PublicFeaturesPage() {
       {/* Public Footer */}
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: '40px 24px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          <div>&copy; {new Date().getFullYear()} Lansan CRM Inc. Single Company Platform.</div>
+          <div>&copy; {new Date().getFullYear()} LanSan Company. Internal CRM Platform.</div>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Sign In</Link>
+            <Link href="/login" style={{ color: '#94a3b8', textDecoration: 'none' }}>Team Sign In</Link>
             <Link href="/about" style={{ color: '#94a3b8', textDecoration: 'none' }}>About Us</Link>
-            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Open App &rarr;</Link>
+            <Link href="/dashboard" style={{ color: '#34d399', textDecoration: 'none', fontWeight: 700 }}>Launch CRM &rarr;</Link>
           </div>
         </div>
       </footer>

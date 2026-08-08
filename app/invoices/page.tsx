@@ -12,13 +12,36 @@ import {
   IconReceipt,
   IconCheck,
   IconAlertCircle,
-  IconPrinter
+  IconPrinter,
+  IconBrandStripe,
+  IconCopy,
+  IconExternalLink
 } from '@tabler/icons-react';
 import { Invoice } from '@/lib/types';
 import { jsPDF } from 'jspdf';
 
 export default function InvoicesPage() {
-  const { invoices, searchQuery, openModal, updateInvoiceStatus, deleteInvoice, showToast } = useCRM();
+  const { invoices, searchQuery, openModal, updateInvoiceStatus, deleteInvoice, showToast, integrations } = useCRM();
+
+  // Check if Stripe is connected
+  const stripeIntegration = integrations.find(i => i.name === 'Stripe');
+  const isStripeConnected = stripeIntegration?.connected || false;
+
+  // Generate Stripe Payment Link (Ready for Phase 7)
+  const handleGeneratePaymentLink = (inv: Invoice) => {
+    if (!isStripeConnected) {
+      showToast('Please connect Stripe in Integrations to enable payment links.', 'error');
+      return;
+    }
+    
+    // TODO: Phase 7 - Call Stripe API to create payment link
+    // For now, generate a mock payment link
+    const mockPaymentLink = `https://pay.stripe.com/invoice/${inv.id}/preview`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(mockPaymentLink);
+    showToast(`💳 Payment link copied! (Connect Stripe in Phase 7 for real links)`, 'info');
+  };
 
   const filteredInvoices = invoices.filter(
     (inv) =>
@@ -507,6 +530,38 @@ export default function InvoicesPage() {
 
   return (
     <div>
+      {/* Stripe Connection Banner (if not connected) */}
+      {!isStripeConnected && (
+        <div style={{ 
+          background: '#eff6ff', 
+          border: '1px solid #bfdbfe', 
+          borderRadius: '12px', 
+          padding: '14px 18px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <IconBrandStripe size={28} color="#635BFF" />
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e40af', marginBottom: '2px' }}>
+                Connect Stripe to Accept Payments
+              </div>
+              <div style={{ fontSize: '12px', color: '#3b82f6' }}>
+                Enable online payments and automatic invoice status updates when clients pay.
+              </div>
+            </div>
+          </div>
+          <a href="/integrations">
+            <Button variant="primary" size="sm">
+              Connect Stripe
+            </Button>
+          </a>
+        </div>
+      )}
+
       {/* Financial Metrics Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '20px' }}>
         <Card>
@@ -614,6 +669,19 @@ export default function InvoicesPage() {
                 </td>
                 <td>
                   <div style={{ display: 'flex', gap: '6px' }}>
+                    {/* Stripe Payment Link Button */}
+                    {inv.status !== 'Paid' && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        icon={<IconBrandStripe size={14} />}
+                        onClick={() => handleGeneratePaymentLink(inv)}
+                        title="Generate Stripe Payment Link"
+                      >
+                        Payment Link
+                      </Button>
+                    )}
+                    
                     <Button
                       variant="default"
                       size="sm"
@@ -630,7 +698,7 @@ export default function InvoicesPage() {
                       onClick={() => handleDownloadInvoice(inv)}
                       title="Download Invoice as PDF"
                     >
-                      Download
+                      PDF
                     </Button>
                     <Button
                       variant="danger"
